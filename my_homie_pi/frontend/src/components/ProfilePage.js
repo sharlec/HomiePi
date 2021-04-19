@@ -2,17 +2,49 @@ import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import FormControl from "@material-ui/core/FormControl";
+import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import TextField from "@material-ui/core/TextField";
+
 
 export default class ProfilePage extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            gender : "M",
+            name   : null,
+            age    : null,
+    };
+        this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
+        this.handleAgeChange = this.handleAgeChange.bind(this);
+        this.handleGenderChange = this.handleGenderChange.bind(this)
+        this.handleNameChange = this.handleNameChange.bind(this)
+    }
+
+  handleGenderChange(e) {
+    this.setState({
+      gender: e.target.value,
+    });
+  }
+
+    handleNameChange(e) {
+    this.setState({
+      name: e.target.value,
+    });
+  }
+
+    handleAgeChange(e) {
+    this.setState({
+      age: e.target.value,
+    });
+  }
+
+    handleRegisterButtonPressed(){
+        console.log(this.state)
     }
 
     render(){
@@ -26,11 +58,11 @@ export default class ProfilePage extends Component{
         </Grid>
 
         <Grid item xs={12} align="center">
-          <FormControl component="fieldset">
+          <FormControl component="fieldset" >
             <FormHelperText>
               <div align="center">Register a new user here</div>
             </FormHelperText>
-              <RadioGroup row defaultValue='M'>
+              <RadioGroup row defaultValue='M' onChange={this.handleGenderChange}>
                   <FormControlLabel
                       value="M"
                       control={<Radio color="primary" />}
@@ -56,6 +88,7 @@ export default class ProfilePage extends Component{
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
+                    onChange={this.handleNameChange}
                 />
                 <FormHelperText>
                     <div align = "center">Name</div>
@@ -73,6 +106,7 @@ export default class ProfilePage extends Component{
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
+                    onChange={this.handleAgeChange}
                 />
                 <FormHelperText>
                     <div align = "center">Age</div>
@@ -81,8 +115,8 @@ export default class ProfilePage extends Component{
         </Grid>
 
        <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained">
-                Submit
+            <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed()}>
+                Register
             </Button>
        </Grid>
 
@@ -91,7 +125,6 @@ export default class ProfilePage extends Component{
                 Back
             </Button>
         </Grid>
-
 
 
         </Grid>
