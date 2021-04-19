@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import userSerializer,CreateUserSerializer
-from .models import user
+from .serializers import userSerializer,CreateUserSerializer, taskSerializer, CreateTaskSerializer
+from .models import user, task
 from  rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -33,5 +33,30 @@ class createUserView(APIView):
                 new_user = user(name = name,age=age)
                 new_user.save()
                 return Response(userSerializer(new_user).data, status=status.HTTP_201_CREATED)
+        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
+class taskView(generics.ListAPIView):
+        queryset = task.objects.all()
+        serializer_class = taskSerializer
+
+
+
+class createTaskView(APIView):
+    serializer_class = CreateTaskSerializer
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            user_ID = serializer.data.get('user_ID')
+            task_type = serializer.data.get('task_type')
+            name = serializer.data.get('name')
+            queryset = task.objects.filter(name=name)
+            if queryset.exists():
+                print("already exists")
+                new_task = task(user_ID=user_ID, task_type=task_type, name=name)
+                # new_user.save()
+                return Response(userSerializer(new_task).data, status=status.HTTP_200)
+            else:
+                new_task = task(user_ID=user_ID, task_type=task_type,name=name)
+                new_task.save()
+                return Response(userSerializer(new_task).data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)

@@ -1,17 +1,23 @@
 from rest_framework import serializers
-from .models import user
+from .models import user,task
 
 
 class userSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
-        fields = ('id','name','age','created_at')
+        fields = ('id','name','age','gender','created_at')
+
+class taskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = task
+        fields = ('id','user_ID','task_type','name','start_date','end_date')
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user
-        fields = ('name','age')
+        fields = ('name','age','gender')
 
-        # name = models.CharField(max_length=20, unique=True, null=False, default=None)
-        # age = models.IntegerField(null=False, default=1)
-        # created_at = models.DateTimeField(auto_now_add=True)
+class CreateTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = task
+        fields = ('user_ID', 'task_type','name')
