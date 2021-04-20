@@ -27,7 +27,7 @@
         <counts>
           <entry key="css" value="198" />
           <entry key="html" value="297" />
-          <entry key="js" value="3022" />
+          <entry key="js" value="3321" />
           <entry key="json" value="77" />
           <entry key="py" value="2471" />
         </counts>
@@ -37,7 +37,7 @@
           <entry key="CSS" value="198" />
           <entry key="HTML" value="297" />
           <entry key="JSON" value="77" />
-          <entry key="JavaScript" value="3022" />
+          <entry key="JavaScript" value="3321" />
           <entry key="Python" value="2471" />
         </counts>
       </usages-collector>
@@ -116,7 +116,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/API/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="438">
+            <state relative-caret-position="708">
               <caret line="61" column="42" selection-start-line="61" selection-start-column="42" selection-end-line="61" selection-end-column="42" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
@@ -169,8 +169,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/frontend/src/components/ProfilePage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="25" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+            <state relative-caret-position="416">
+              <caret line="56" column="21" selection-start-line="47" selection-start-column="21" selection-end-line="56" selection-end-column="21" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -195,6 +195,7 @@
       <find>app</find>
       <find>save</find>
       <find>onchange</find>
+      <find>onclick</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -629,16 +630,6 @@
     <entry file="file://$PROJECT_DIR$/API/admin.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/frontend/src/components/HomePage.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/API/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -647,21 +638,6 @@
             <element signature="e#0#38#0" expanded="true" />
             <marker date="1618824627975" expanded="true" signature="121:218" ph="..." />
             <marker date="1618824627975" expanded="true" signature="441:446" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/API/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="61" column="42" selection-start-line="61" selection-start-column="42" selection-end-line="61" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-            <marker date="1618823429903" expanded="true" signature="428:429" ph="..." />
-            <marker date="1618823429903" expanded="true" signature="507:512" ph="..." />
-            <marker date="1618823429903" expanded="true" signature="655:656" ph="..." />
-            <marker date="1618823429903" expanded="true" signature="655:660" ph="..." />
-            <marker date="1618823429903" expanded="true" signature="1521:1530" ph="..." />
           </folding>
         </state>
       </provider>
@@ -676,16 +652,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/my_homie_pi/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="32" selection-start-column="32" selection-end-column="32" />
-          <folding>
-            <element signature="e#645#677#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/frontend/src/components/TaskPage.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -696,10 +662,45 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/API/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="708">
+          <caret line="61" column="42" selection-start-line="61" selection-start-column="42" selection-end-line="61" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+            <marker date="1618823429903" expanded="true" signature="428:429" ph="..." />
+            <marker date="1618823429903" expanded="true" signature="507:512" ph="..." />
+            <marker date="1618823429903" expanded="true" signature="655:656" ph="..." />
+            <marker date="1618823429903" expanded="true" signature="655:660" ph="..." />
+            <marker date="1618823429903" expanded="true" signature="1521:1530" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my_homie_pi/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="32" selection-start-column="32" selection-end-column="32" />
+          <folding>
+            <element signature="e#645#677#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/src/components/HomePage.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/frontend/src/components/ProfilePage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="25" selection-start-line="18" selection-start-column="25" selection-end-line="18" selection-end-column="25" />
+        <state relative-caret-position="416">
+          <caret line="56" column="21" selection-start-line="47" selection-start-column="21" selection-end-line="56" selection-end-column="21" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>

@@ -45,6 +45,16 @@ export default class ProfilePage extends Component{
 
     handleRegisterButtonPressed(){
         console.log(this.state)
+        const requestOptions={
+            method: "POST",
+            header:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                gender: this.state.gender,
+                name:   this.state.name,
+                age:    this.state.age
+        }),
+        }
+        fetch('/API/create-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
     }
 
     render(){
