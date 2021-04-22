@@ -60,3 +60,19 @@ class createTaskView(APIView):
                 new_task.save()
                 return Response(userSerializer(new_task).data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
+class getUser(APIView):
+    serializer_class = userSerializer
+    look_url_kwarg = 'user_name'
+
+    def get(self,request,format=None):
+        user_name = request.GET.get(self.look_url_kwarg)
+        if user_name != None:
+            queryset = user.objects.filter(name = user_name)
+            if len(queryset) > 0:
+                data = userSerializer(queryset[0]).data
+                # data['age']
+                # data['is_host'] = self.request.session.session_key == user_name
+                return Response(data, status=status.HTTP_200_OK)
+            return Response({'Bad Request': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'Bad Request': 'code parameters not found'}, status=status.HTTP_400_BAD_REQUEST)
