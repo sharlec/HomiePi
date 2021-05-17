@@ -59,7 +59,6 @@ export default class RegisterPagePage extends Component{
 
     render(){
         return(
-
         <Grid container spacing={1}>
         <Grid item xs={12} align="center">
           <Typography component="h4" variant="h4">
@@ -135,8 +134,6 @@ export default class RegisterPagePage extends Component{
                 Back
             </Button>
         </Grid>
-
-
         </Grid>
         )
     }

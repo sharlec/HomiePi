@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControl from "@material-ui/core/FormControl/FormControl";
+import TextField from "@material-ui/core/TextField/TextField";
+import Modal from './Modal/addTask'
 
 export default class ProfilePage extends Component{
     constructor(props){
@@ -31,15 +34,19 @@ export default class ProfilePage extends Component{
         });
       });
   }
-    render(){
-        //在这里加入逻辑语句：先判定是否match session
-        //如果是，从数据库拉数据
-        return <div>
-            <h3>{this.user_name}</h3>
-            <p>name: {this.state.name}</p>
-            <p>age: {this.state.age}</p>
-            <p>gender: {this.state.gender}</p>
 
-        </div>
-    }
+  render() {
+    // const { visible, confirmLoading, ModalText } = this.state;
+    return (
+      <div>
+      <h3>{this.user_name}</h3>
+        <p>name: {this.state.name}</p>
+        <p>age: {this.state.age}</p>
+        <p>gender: {this.state.gender}</p>
+          <button>New Task</button>
+          <Modal/>
+      </div>
+    );
+  }
 }
+
