@@ -77,6 +77,92 @@ const DONE_ITERATOR_RESULT = new Set().keys().next();
 // Tsh = Timestamp + Hash
 // Tshs = Timestamp + Hash combinations
 
+class SnapshotIterator {
+	constructor(next) {
+		this.next = next;
+	}
+}
+
+class SnapshotIterable {
+	constructor(snapshot, getMaps) {
+		this.snapshot = snapshot;
+		this.getMaps = getMaps;
+	}
+
+	[Symbol.iterator]() {
+		let state = 0;
+		/** @type {IterableIterator<string>} */
+		let it;
+		/** @type {(Snapshot) => (Map<string, any> | Set<string>)[]} */
+		let getMaps;
+		/** @type {(Map<string, any> | Set<string>)[]} */
+		let maps;
+		/** @type {Snapshot} */
+		let snapshot;
+		let queue;
+		return new SnapshotIterator(() => {
+			for (;;) {
+				switch (state) {
+					case 0:
+						snapshot = this.snapshot;
+						getMaps = this.getMaps;
+						maps = getMaps(snapshot);
+						state = 1;
+					/* falls through */
+					case 1:
+						if (maps.length > 0) {
+							const map = maps.pop();
+							if (map !== undefined) {
+								it = map.keys();
+								state = 2;
+							} else {
+								break;
+							}
+						} else {
+							state = 3;
+							break;
+						}
+					/* falls through */
+					case 2: {
+						const result = it.next();
+						if (!result.done) return result;
+						state = 1;
+						break;
+					}
+					case 3: {
+						const children = snapshot.children;
+						if (children !== undefined) {
+							if (children.size === 1) {
+								// shortcut for a single child
+								// avoids allocation of queue
+								for (const child of children) snapshot = child;
+								maps = getMaps(snapshot);
+								state = 1;
+								break;
+							}
+							if (queue === undefined) queue = [];
+							for (const child of children) {
+								queue.push(child);
+							}
+						}
+						if (queue !== undefined && queue.length > 0) {
+							snapshot = queue.pop();
+							maps = getMaps(snapshot);
+							state = 1;
+							break;
+						} else {
+							state = 4;
+						}
+					}
+					/* falls through */
+					case 4:
+						return DONE_ITERATOR_RESULT;
+				}
+			}
+		});
+	}
+}
+
 class Snapshot {
 	constructor() {
 		this._flags = 0;
@@ -283,63 +369,7 @@ class Snapshot {
 	 * @returns {Iterable<string>} iterable
 	 */
 	_createIterable(getMaps) {
-		let snapshot = this;
-		return {
-			[Symbol.iterator]() {
-				let state = 0;
-				/** @type {IterableIterator<string>} */
-				let it;
-				let maps = getMaps(snapshot);
-				const queue = [];
-				return {
-					next() {
-						for (;;) {
-							switch (state) {
-								case 0:
-									if (maps.length > 0) {
-										const map = maps.pop();
-										if (map !== undefined) {
-											it = map.keys();
-											state = 1;
-										} else {
-											break;
-										}
-									} else {
-										state = 2;
-										break;
-									}
-								/* falls through */
-								case 1: {
-									const result = it.next();
-									if (!result.done) return result;
-									state = 0;
-									break;
-								}
-								case 2: {
-									const children = snapshot.children;
-									if (children !== undefined) {
-										for (const child of children) {
-											queue.push(child);
-										}
-									}
-									if (queue.length > 0) {
-										snapshot = queue.pop();
-										maps = getMaps(snapshot);
-										state = 0;
-										break;
-									} else {
-										state = 3;
-									}
-								}
-								/* falls through */
-								case 3:
-									return DONE_ITERATOR_RESULT;
-							}
-						}
-					}
-				};
-			}
-		};
+		return new SnapshotIterable(this, getMaps);
 	}
 
 	/**
@@ -1130,12 +1160,8 @@ class FileSystemInfo {
 	 * @returns {void}
 	 */
 	resolveBuildDependencies(context, deps, callback) {
-		const {
-			resolveContext,
-			resolveEsm,
-			resolveCjs,
-			resolveCjsAsChild
-		} = this._createBuildDependenciesResolvers();
+		const { resolveContext, resolveEsm, resolveCjs, resolveCjsAsChild } =
+			this._createBuildDependenciesResolvers();
 
 		/** @type {Set<string>} */
 		const files = new Set();
@@ -1219,7 +1245,7 @@ class FileSystemInfo {
 						return callback();
 					}
 					resolveResults.set(key, undefined);
-					resolveContext(context, path, resolverContext, (err, result) => {
+					resolveContext(context, path, resolverContext, (err, _, result) => {
 						if (err) {
 							if (expected === false) {
 								resolveResults.set(key, false);
@@ -1229,11 +1255,12 @@ class FileSystemInfo {
 							err.message += `\nwhile resolving '${path}' in ${context} to a directory`;
 							return callback(err);
 						}
-						resolveResults.set(key, result);
+						const resultPath = result.path;
+						resolveResults.set(key, resultPath);
 						push({
 							type: RBDT_DIRECTORY,
 							context: undefined,
-							path: result,
+							path: resultPath,
 							expected: undefined,
 							issuer: job
 						});
@@ -1246,14 +1273,16 @@ class FileSystemInfo {
 						return callback();
 					}
 					resolveResults.set(key, undefined);
-					resolve(context, path, resolverContext, (err, result) => {
+					resolve(context, path, resolverContext, (err, _, result) => {
 						if (typeof expected === "string") {
-							if (result === expected) {
-								resolveResults.set(key, result);
+							if (!err && result && result.path === expected) {
+								resolveResults.set(key, result.path);
 							} else {
 								invalidResolveResults.add(key);
 								this.logger.warn(
-									`Resolving '${path}' in ${context} for build dependencies doesn't lead to expected result '${expected}', but to '${result}' instead. Resolving dependencies are ignored for this path.\n${pathToString(
+									`Resolving '${path}' in ${context} for build dependencies doesn't lead to expected result '${expected}', but to '${
+										err || (result && result.path)
+									}' instead. Resolving dependencies are ignored for this path.\n${pathToString(
 										job
 									)}`
 								);
@@ -1270,11 +1299,12 @@ class FileSystemInfo {
 								)}`;
 								return callback(err);
 							}
-							resolveResults.set(key, result);
+							const resultPath = result.path;
+							resolveResults.set(key, resultPath);
 							push({
 								type: RBDT_FILE,
 								context: undefined,
-								path: result,
+								path: resultPath,
 								expected: undefined,
 								issuer: job
 							});
@@ -1438,7 +1468,7 @@ class FileSystemInfo {
 							}
 						} else if (supportsEsm && /\.m?js$/.test(path)) {
 							if (!this._warnAboutExperimentalEsmTracking) {
-								this.logger.info(
+								this.logger.log(
 									"Node.js doesn't offer a (nice) way to introspect the ESM dependency graph yet.\n" +
 										"Until a full solution is available webpack uses an experimental ESM tracking based on parsing.\n" +
 										"As best effort webpack parses the ESM files to guess dependencies. But this can lead to expensive and incorrect tracking."
@@ -1513,9 +1543,8 @@ class FileSystemInfo {
 						break;
 					}
 					case RBDT_DIRECTORY_DEPENDENCIES: {
-						const match = /(^.+[\\/]node_modules[\\/](?:@[^\\/]+[\\/])?[^\\/]+)/.exec(
-							path
-						);
+						const match =
+							/(^.+[\\/]node_modules[\\/](?:@[^\\/]+[\\/])?[^\\/]+)/.exec(path);
 						const packagePath = match ? match[1] : path;
 						const packageJson = join(this.fs, packagePath, "package.json");
 						this.fs.readFile(packageJson, (err, content) => {
@@ -1603,12 +1632,8 @@ class FileSystemInfo {
 	 * @returns {void}
 	 */
 	checkResolveResultsValid(resolveResults, callback) {
-		const {
-			resolveCjs,
-			resolveCjsAsChild,
-			resolveEsm,
-			resolveContext
-		} = this._createBuildDependenciesResolvers();
+		const { resolveCjs, resolveCjsAsChild, resolveEsm, resolveContext } =
+			this._createBuildDependenciesResolvers();
 		asyncLib.eachLimit(
 			resolveResults,
 			20,
@@ -1616,38 +1641,42 @@ class FileSystemInfo {
 				const [type, context, path] = key.split("\n");
 				switch (type) {
 					case "d":
-						resolveContext(context, path, {}, (err, result) => {
+						resolveContext(context, path, {}, (err, _, result) => {
 							if (expectedResult === false)
 								return callback(err ? undefined : INVALID);
 							if (err) return callback(err);
-							if (result !== expectedResult) return callback(INVALID);
+							const resultPath = result.path;
+							if (resultPath !== expectedResult) return callback(INVALID);
 							callback();
 						});
 						break;
 					case "f":
-						resolveCjs(context, path, {}, (err, result) => {
+						resolveCjs(context, path, {}, (err, _, result) => {
 							if (expectedResult === false)
 								return callback(err ? undefined : INVALID);
 							if (err) return callback(err);
-							if (result !== expectedResult) return callback(INVALID);
+							const resultPath = result.path;
+							if (resultPath !== expectedResult) return callback(INVALID);
 							callback();
 						});
 						break;
 					case "c":
-						resolveCjsAsChild(context, path, {}, (err, result) => {
+						resolveCjsAsChild(context, path, {}, (err, _, result) => {
 							if (expectedResult === false)
 								return callback(err ? undefined : INVALID);
 							if (err) return callback(err);
-							if (result !== expectedResult) return callback(INVALID);
+							const resultPath = result.path;
+							if (resultPath !== expectedResult) return callback(INVALID);
 							callback();
 						});
 						break;
 					case "e":
-						resolveEsm(context, path, {}, (err, result) => {
+						resolveEsm(context, path, {}, (err, _, result) => {
 							if (expectedResult === false)
 								return callback(err ? undefined : INVALID);
 							if (err) return callback(err);
-							if (result !== expectedResult) return callback(INVALID);
+							const resultPath = result.path;
+							if (resultPath !== expectedResult) return callback(INVALID);
 							callback();
 						});
 						break;
@@ -1806,11 +1835,12 @@ class FileSystemInfo {
 						unsharedManagedFiles
 					);
 				}
-				const unsharedManagedContexts = this._managedContextsOptimization.optimize(
-					managedContexts,
-					undefined,
-					children
-				);
+				const unsharedManagedContexts =
+					this._managedContextsOptimization.optimize(
+						managedContexts,
+						undefined,
+						children
+					);
 				if (managedContexts.size !== 0) {
 					snapshot.setManagedContexts(managedContexts);
 					this._managedContextsOptimization.storeUnsharedSnapshot(
@@ -1818,11 +1848,12 @@ class FileSystemInfo {
 						unsharedManagedContexts
 					);
 				}
-				const unsharedManagedMissing = this._managedMissingOptimization.optimize(
-					managedMissing,
-					undefined,
-					children
-				);
+				const unsharedManagedMissing =
+					this._managedMissingOptimization.optimize(
+						managedMissing,
+						undefined,
+						children
+					);
 				if (managedMissing.size !== 0) {
 					snapshot.setManagedMissing(managedMissing);
 					this._managedMissingOptimization.storeUnsharedSnapshot(
@@ -2026,11 +2057,12 @@ class FileSystemInfo {
 					}
 					break;
 				case 1:
-					unsharedContextTimestamps = this._contextTimestampsOptimization.optimize(
-						capturedDirectories,
-						startTime,
-						children
-					);
+					unsharedContextTimestamps =
+						this._contextTimestampsOptimization.optimize(
+							capturedDirectories,
+							startTime,
+							children
+						);
 					for (const path of capturedDirectories) {
 						const cache = this._contextTimestamps.get(path);
 						if (cache !== undefined) {

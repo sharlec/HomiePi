@@ -66,10 +66,8 @@ class JsonpChunkLoadingRuntimeModule extends RuntimeModule {
 				scriptType
 			}
 		} = compilation;
-		const {
-			linkPreload,
-			linkPrefetch
-		} = JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
+		const { linkPreload, linkPrefetch } =
+			JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
 		const fn = RuntimeGlobals.ensureChunkHandlers;
 		const withBaseURI = this._runtimeRequirements.has(RuntimeGlobals.baseURI);
 		const withLoading = this._runtimeRequirements.has(
@@ -400,7 +398,7 @@ class JsonpChunkLoadingRuntimeModule extends RuntimeModule {
 									"}"
 								]),
 								"}",
-								"if(runtime) runtime(__webpack_require__);",
+								"if(runtime) var result = runtime(__webpack_require__);",
 								"if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);",
 								"for(;i < chunkIds.length; i++) {",
 								Template.indent([
@@ -411,7 +409,9 @@ class JsonpChunkLoadingRuntimeModule extends RuntimeModule {
 									"installedChunks[chunkIds[i]] = 0;"
 								]),
 								"}",
-								withOnChunkLoad ? `${RuntimeGlobals.onChunksLoaded}();` : ""
+								withOnChunkLoad
+									? `return ${RuntimeGlobals.onChunksLoaded}(result);`
+									: ""
 							]
 						)}`,
 						"",

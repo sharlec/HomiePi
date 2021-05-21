@@ -14,14 +14,22 @@ import Modal from './Modal/addTask'
 export default class ProfilePage extends Component{
     constructor(props){
         super(props);
+
+        this.showModal = this.showModal.bind(this)
         this.state = {
-    gender : "M",
-    name   : null,
-    age    : null,
-    };
+            gender : "M",
+            name   : null,
+            age    : null,
+            visible: false,
+          };
+
         this.user_name = this.props.match.params.user_name;
         this.getUserDetails();
     }
+
+    showModal() {
+    this.setState({ visible: true })
+  }
 
     getUserDetails() {
     fetch("/API/get-user" + "?user_name=" + this.user_name)
@@ -36,15 +44,15 @@ export default class ProfilePage extends Component{
   }
 
   render() {
-    // const { visible, confirmLoading, ModalText } = this.state;
-    return (
+        const { visible } = this.state
+        return (
       <div>
       <h3>{this.user_name}</h3>
         <p>name: {this.state.name}</p>
         <p>age: {this.state.age}</p>
         <p>gender: {this.state.gender}</p>
-          <button>New Task</button>
-          <Modal/>
+         <button onClick={this.showModal}>click here</button>
+          <Modal visible={visible}></Modal>
       </div>
     );
   }
