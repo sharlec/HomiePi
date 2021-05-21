@@ -11,14 +11,13 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
-export default class RegisterPagePage extends Component{
+export default class LoginPage extends Component{
     constructor(props){
         super(props);
         this.state = {
             gender : "M",
             name   : null,
             age    : null,
-            password   : null,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
@@ -33,36 +32,48 @@ export default class RegisterPagePage extends Component{
     });
   }
 
-    handlePasswordChange(e) {
+    handleNameChange(e) {
     this.setState({
       name: e.target.value,
     });
   }
 
-      handleNameChange(e) {
+  handlePasswordChange(e) {
     this.setState({
-      password: e.target.value,
+      name: e.target.value,
     });
   }
+
+
     handleAgeChange(e) {
     this.setState({
       age: e.target.value,
     });
   }
 
+      handleRegisterButtonPressed(){
+// onclick直接跳转registerpage
+
+    }
+
+
     handleRegisterButtonPressed(){
-        console.log(this.state)
-        const requestOptions={
-            method: "POST",
-            header:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                gender: this.state.gender,
-                name:   this.state.name,
-                age:    this.state.age,
-                password:   this.state.password,
-        }),
-        }
-        fetch('/API/create-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        //这里是login按钮，所以要检查login信息
+        //首先是有没有这个人，
+        // 其次是密码对不对，
+        // 如果对了，给他session并且跳转到profile
+        // 如果不对，直接给提示信息
+        // console.log(this.state)
+        // const requestOptions={
+        //     method: "POST",
+        //     header:{'Content-Type':'application/json'},
+        //     body:JSON.stringify({
+        //         gender: this.state.gender,
+        //         name:   this.state.name,
+        //         age:    this.state.age
+        // }),
+        // }
+        // fetch('/API/create-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
     }
 
     render(){
@@ -70,32 +81,10 @@ export default class RegisterPagePage extends Component{
         <Grid container spacing={1}>
         <Grid item xs={12} align="center">
           <Typography component="h4" variant="h4">
-            Create a New Account
+            Login
           </Typography>
         </Grid>
 
-        <Grid item xs={12} align="center">
-          <FormControl component="fieldset" >
-            <FormHelperText>
-              <div align="center">Register a new user here</div>
-            </FormHelperText>
-              <RadioGroup row defaultValue='M' onChange={this.handleGenderChange}>
-                  <FormControlLabel
-                      value="M"
-                      control={<Radio color="primary" />}
-                      label = "Male"
-                      labelPlacement="bottom"
-                  />
-
-                    <FormControlLabel
-                      value="F"
-                      control={<Radio color="secondary" />}
-                      label = "Female"
-                      labelPlacement="bottom"
-                  />
-              </RadioGroup>
-             </FormControl>
-         </Grid>
 
         <Grid item xs={12} align="center">
             <FormControl>
@@ -113,7 +102,7 @@ export default class RegisterPagePage extends Component{
             </FormControl>
         </Grid>
 
-        <Grid item xs={12} align="center">
+       <Grid item xs={12} align="center">
             <FormControl>
                 <TextField
                     required={true}
@@ -121,7 +110,7 @@ export default class RegisterPagePage extends Component{
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    onChange={this.handlePasswordChange()}
+                    onChange={this.handlePasswordChange}
                 />
                 <FormHelperText>
                     <div align = "center">Password</div>
@@ -129,31 +118,13 @@ export default class RegisterPagePage extends Component{
             </FormControl>
         </Grid>
 
-        <Grid item xs={12} align="center">
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="number"
-                    defaultValue={0}
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handleAgeChange}
-                />
-                <FormHelperText>
-                    <div align = "center">Age</div>
-                </FormHelperText>
-            </FormControl>
-        </Grid>
 
        <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed()}>
-                Register
+            <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed()} style={{ width: 80}}>
+                Login
             </Button>
-       </Grid>
 
-        <Grid item xs={12} align="center">
-           <Button color = "secondary" variant="contained" to="/" component={Link}>
+           <Button color = "secondary" variant="contained" to="/" component={Link} style={{ width: 80}}>
                 Back
             </Button>
         </Grid>
