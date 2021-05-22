@@ -45,7 +45,7 @@
         <counts>
           <entry key="css" value="414" />
           <entry key="html" value="297" />
-          <entry key="js" value="5277" />
+          <entry key="js" value="5296" />
           <entry key="json" value="77" />
           <entry key="py" value="3014" />
         </counts>
@@ -55,7 +55,7 @@
           <entry key="CSS" value="414" />
           <entry key="HTML" value="297" />
           <entry key="JSON" value="77" />
-          <entry key="JavaScript" value="5277" />
+          <entry key="JavaScript" value="5296" />
           <entry key="Python" value="3014" />
         </counts>
       </usages-collector>
@@ -140,8 +140,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/frontend/src/components/LoginPage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="725">
-              <caret line="58" column="93" lean-forward="true" selection-start-line="58" selection-start-column="93" selection-end-line="58" selection-end-column="111" />
+            <state relative-caret-position="506">
+              <caret line="58" column="5" lean-forward="true" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -220,6 +220,7 @@
       <find>get</find>
       <find>name</find>
       <find>handle</find>
+      <find>log</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -771,8 +772,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frontend/src/components/LoginPage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="725">
-          <caret line="58" column="93" lean-forward="true" selection-start-line="58" selection-start-column="93" selection-end-line="58" selection-end-column="111" />
+        <state relative-caret-position="506">
+          <caret line="58" column="5" lean-forward="true" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>

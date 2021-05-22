@@ -6,7 +6,6 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
-import Popup from 'reactjs-popup';
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -16,7 +15,7 @@ export default class LoginPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            gender : "M",
+            gender : null,
             name   : null,
             age    : null,
     };
@@ -42,13 +41,13 @@ export default class LoginPage extends Component{
 
     }
 
-    handleRegisterButtonPressed(){
+    handleLoginButtonPressed(){
         //这里是login按钮，所以要检查login信息
         //首先是有没有这个人，
         // 其次是密码对不对，
         // 如果对了，给他session并且跳转到profile
         // 如果不对，直接给提示信息
-        console.log(this.state)
+        // console.log(this.state)
         const requestOptions={
             method: "GET",
             header:{'Content-Type':'application/json'},
@@ -101,7 +100,7 @@ export default class LoginPage extends Component{
         </Grid>
 
        <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed()} style={{ width: 80}}>
+            <Button color = "primary" variant="contained" onClick={this.handleLoginButtonPressed()} style={{ width: 80}}>
                 Login
             </Button>
 
