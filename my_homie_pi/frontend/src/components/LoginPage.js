@@ -6,6 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
+import Popup from 'reactjs-popup';
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -20,17 +21,9 @@ export default class LoginPage extends Component{
             age    : null,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
-        this.handleAgeChange = this.handleAgeChange.bind(this);
-        this.handleGenderChange = this.handleGenderChange.bind(this)
         this.handleNameChange = this.handleNameChange.bind(this)
         this.handlePasswordChange = this.handlePasswordChange.bind(this)
     }
-
-  handleGenderChange(e) {
-    this.setState({
-      gender: e.target.value,
-    });
-  }
 
     handleNameChange(e) {
     this.setState({
@@ -44,18 +37,10 @@ export default class LoginPage extends Component{
     });
   }
 
-
-    handleAgeChange(e) {
-    this.setState({
-      age: e.target.value,
-    });
-  }
-
       handleRegisterButtonPressed(){
 // onclick直接跳转registerpage
 
     }
-
 
     handleRegisterButtonPressed(){
         //这里是login按钮，所以要检查login信息
@@ -63,17 +48,15 @@ export default class LoginPage extends Component{
         // 其次是密码对不对，
         // 如果对了，给他session并且跳转到profile
         // 如果不对，直接给提示信息
-        // console.log(this.state)
-        // const requestOptions={
-        //     method: "POST",
-        //     header:{'Content-Type':'application/json'},
-        //     body:JSON.stringify({
-        //         gender: this.state.gender,
-        //         name:   this.state.name,
-        //         age:    this.state.age
-        // }),
-        // }
-        // fetch('/API/create-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        console.log(this.state)
+        const requestOptions={
+            method: "GET",
+            header:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                user_name:   this.state.name,
+        }),
+        }
+        fetch('/API/get-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
     }
 
     render(){
@@ -84,7 +67,6 @@ export default class LoginPage extends Component{
             Login
           </Typography>
         </Grid>
-
 
         <Grid item xs={12} align="center">
             <FormControl>
@@ -106,7 +88,7 @@ export default class LoginPage extends Component{
             <FormControl>
                 <TextField
                     required={true}
-                    type="text"
+                    type="password"
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
@@ -117,7 +99,6 @@ export default class LoginPage extends Component{
                 </FormHelperText>
             </FormControl>
         </Grid>
-
 
        <Grid item xs={12} align="center">
             <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed()} style={{ width: 80}}>
