@@ -20,14 +20,17 @@ export default class LoginPage extends Component{
             age    : null,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this)
-        this.handlePasswordChange = this.handlePasswordChange.bind(this)
+        this.handleLoginButtonPressed = this.handleLoginButtonPressed.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
 
     handleNameChange(e) {
     this.setState({
       name: e.target.value,
+
     });
+    console.log(this.state)
   }
 
   handlePasswordChange(e) {
@@ -42,20 +45,18 @@ export default class LoginPage extends Component{
     }
 
     handleLoginButtonPressed(){
-        //这里是login按钮，所以要检查login信息
-        //首先是有没有这个人，
-        // 其次是密码对不对，
-        // 如果对了，给他session并且跳转到profile
-        // 如果不对，直接给提示信息
-        // console.log(this.state)
         const requestOptions={
             method: "GET",
             header:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                user_name:   this.state.name,
-        }),
-        }
-        fetch('/API/get-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        };
+
+        fetch('/API/get-user?user_name='+this.state.name, requestOptions).then((response)=>response.json()).then(
+            data => {
+                if (data.name) {
+                    this.props.history.push("profile/" + this.state.name)
+                } else console.log()
+            }
+        )
     }
 
     render(){
@@ -100,7 +101,7 @@ export default class LoginPage extends Component{
         </Grid>
 
        <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained" onClick={this.handleLoginButtonPressed()} style={{ width: 80}}>
+            <Button color = "primary" variant="contained" onClick={this.handleLoginButtonPressed} style={{ width: 80}}>
                 Login
             </Button>
 

@@ -12,10 +12,10 @@ class user(models.Model):
     age = models.IntegerField(null=False, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
 class task(models.Model):
     user_ID = models.IntegerField(null=False, default=0)
     task_type = models.CharField(max_length=20, unique=False,null=False, default=None)
     name = models.CharField(max_length=20, unique=True,null=False, default=None)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(default=None)
+
