@@ -15,7 +15,7 @@ export default class ProfilePage extends Component{
     constructor(props){
         super(props);
 
-        this.showModal = this.showModal.bind(this)
+        this.showModal = this.showModal.bind(this);
         this.state = {
             gender : "M",
             name   : null,
@@ -53,6 +53,9 @@ export default class ProfilePage extends Component{
         <p>gender: {this.state.gender}</p>
          <button onClick={this.showModal}>click here</button>
           <Modal visible={visible}></Modal>
+
+                  <br/><br/><br/>
+        <h3>The following is the record</h3>
       </div>
     );
   }

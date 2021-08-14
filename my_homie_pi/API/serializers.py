@@ -10,7 +10,7 @@ class userSerializer(serializers.ModelSerializer):
 class taskSerializer(serializers.ModelSerializer):
     class Meta:
         model = task
-        fields = ('id','user_ID','task_type','name','start_date','end_date')
+        fields = ('id','user_ID','repeat','name','week','start_date')
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,4 +20,4 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = task
-        fields = ('user_ID', 'task_type','name')
+        fields = ('user_ID', 'repeat', 'name', 'week')

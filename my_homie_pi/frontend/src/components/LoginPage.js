@@ -11,6 +11,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
+
 export default class LoginPage extends Component{
     constructor(props){
         super(props);
@@ -18,6 +19,7 @@ export default class LoginPage extends Component{
             gender : null,
             name   : null,
             age    : null,
+            password: null,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleLoginButtonPressed = this.handleLoginButtonPressed.bind(this);
@@ -35,7 +37,7 @@ export default class LoginPage extends Component{
 
   handlePasswordChange(e) {
     this.setState({
-      name: e.target.value,
+      password: e.target.value,
     });
   }
 
@@ -105,11 +107,14 @@ export default class LoginPage extends Component{
                 Login
             </Button>
 
-           <Button color = "secondary" variant="contained" to="/" component={Link} style={{ width: 80}}>
-                Back
+           <Button color = "secondary" variant="contained" to="/register" component={Link} style={{ width: 80}}>
+                Register
             </Button>
         </Grid>
+        <br/><br/><br/>
+        <h3>The following is the record</h3>
         </Grid>
+
         )
     }
 }

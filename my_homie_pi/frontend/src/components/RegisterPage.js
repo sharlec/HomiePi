@@ -22,9 +22,9 @@ export default class RegisterPagePage extends Component{
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
-        this.handleGenderChange = this.handleGenderChange.bind(this)
-        this.handleNameChange = this.handleNameChange.bind(this)
-        this.handlePasswordChange = this.handlePasswordChange.bind(this)
+        this.handleGenderChange = this.handleGenderChange.bind(this);
+        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
 
   handleGenderChange(e) {
@@ -35,13 +35,13 @@ export default class RegisterPagePage extends Component{
 
     handlePasswordChange(e) {
     this.setState({
-      name: e.target.value,
+      password: e.target.value,
     });
   }
 
       handleNameChange(e) {
     this.setState({
-      password: e.target.value,
+      name: e.target.value,
     });
   }
     handleAgeChange(e) {
@@ -51,17 +51,20 @@ export default class RegisterPagePage extends Component{
   }
 
     handleRegisterButtonPressed(){
-        console.log(this.state)
+        console.log(this.state);
         const requestOptions={
             method: "POST",
-            header:{'Content-Type':'application/json'},
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
             body:JSON.stringify({
                 gender: this.state.gender,
                 name:   this.state.name,
                 age:    this.state.age,
                 password:   this.state.password,
         }),
-        }
+        };
         fetch('/API/create-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
     }
 
@@ -121,7 +124,7 @@ export default class RegisterPagePage extends Component{
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    onChange={this.handlePasswordChange()}
+                    onChange={this.handlePasswordChange}
                 />
                 <FormHelperText>
                     <div align = "center">Password</div>
@@ -147,7 +150,7 @@ export default class RegisterPagePage extends Component{
         </Grid>
 
        <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed()}>
+            <Button color = "primary" variant="contained" onClick={this.handleRegisterButtonPressed}>
                 Register
             </Button>
        </Grid>

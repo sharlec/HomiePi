@@ -7,7 +7,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabe
 import Radio from "@material-ui/core/Radio/Radio";
 import Grid from "@material-ui/core/Grid/Grid";
 import TextField from "@material-ui/core/TextField/TextField";
-
 import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -15,14 +14,53 @@ import FormLabel from '@material-ui/core/FormLabel';
 
 class Modal extends Component {
   constructor(props) {
-    super(props)
-    this.confirm = this.confirm.bind(this)
-    this.closeModal = this.closeModal.bind(this)
+    super(props);
+    // this.confirm = this.confirm.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.handleConfirmButtonPressed = this.handleConfirmButtonPressed.bind(this);
+    this.handleTaskChange = this.handleTaskChange.bind(this);
+    this.handleRepeatChange = this.handleRepeatChange.bind(this);
+
     this.state = {
-      visible: false
+            user_ID : 1,
+            name   : null,
+            repeat : 1,
+            visible: false
     }
   }
 
+  handleConfirmButtonPressed(){
+    console.log(this.state);
+    const requestOptions={
+        method: "POST",
+        headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+        body:JSON.stringify({
+            user_ID : 1,
+            name   : this.state.name,
+            repeat : this.state.repeat,
+            week : "1111111",
+    }),
+    };
+    fetch('/API/create-task',requestOptions).then((response)=>response.json()).then((data)=>console.log(data));
+    const { confirm } = this.props;
+    confirm && confirm();
+    this.setState({ visible: false })
+    }
+
+    handleTaskChange(e) {
+    this.setState({
+      name: e.target.value,
+    });
+  }
+
+    handleRepeatChange(e) {
+      this.setState({
+          repeat: e.target.value,
+      });
+    }
   // 首次渲染使用父组件的状态更新modal中的visible状态，只调用一次
   componentDidMount() {
     this.setState({ visible: this.props.visible })
@@ -35,14 +73,8 @@ class Modal extends Component {
 
   // 点击取消更新modal中的visible状态
   closeModal() {
-    const { onClose } = this.props
-    onClose && onClose()
-    this.setState({ visible: false })
-  }
-
-  confirm() {
-    const { confirm } = this.props
-    confirm && confirm()
+    const { onClose } = this.props;
+    onClose && onClose();
     this.setState({ visible: false })
   }
 
@@ -55,7 +87,6 @@ class Modal extends Component {
       <div className="modal">
         <div className="modal-title">{"Add a New Task Here"}</div>
         <div className="modal-content">
-
             <FormControl>
                 <TextField
                     required={true}
@@ -63,7 +94,7 @@ class Modal extends Component {
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    // onChange={this.handleNameChange}
+                    onChange={this.handleTaskChange}
                 />
                 <FormHelperText>
                     <div align = "center">Task Name</div>
@@ -77,7 +108,7 @@ class Modal extends Component {
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    // onChange={this.handleNameChange}
+                    onChange={this.handleRepeatChange}
                 />
                 <FormHelperText>
                     <div align = "center">How many times per day</div>
@@ -135,7 +166,7 @@ class Modal extends Component {
 
         <div className="modal-operator">
                   <button
-            onClick={this.confirm}
+            onClick={this.handleConfirmButtonPressed}
             className="modal-operator-confirm"
           >Confirm</button>
           <button
