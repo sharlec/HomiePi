@@ -20,3 +20,5 @@ class task(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
 
 
+# class record(models.Model):
+#     user_ID = models.IntegerField(null=False, default=0)

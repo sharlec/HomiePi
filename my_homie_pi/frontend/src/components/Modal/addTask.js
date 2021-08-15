@@ -22,15 +22,33 @@ class Modal extends Component {
     this.handleRepeatChange = this.handleRepeatChange.bind(this);
 
     this.state = {
-            user_ID : 1,
-            name   : null,
-            repeat : 1,
-            visible: false
-    }
+        user_ID : 1,
+        name    : null,
+        repeat  : 1,
+        mon : 0,
+        tu : 0,
+        wed: 0,
+        th: 0,
+        fri: 0,
+        sat: 0,
+        sun: 0,
+        week: [{id: 1, name: 'mon'},
+             {id: 2, name: 'tu'},
+             {id: 3, name: 'wed'},
+             {id: 4, name: 'th'},
+             {id: 5, name: 'fri'},
+             {id: 6, name: 'sat'},
+             {id: 7, name: 'sun'},
+  ],
+        selected : [],
+        visible : false
+    };
+
   }
 
   handleConfirmButtonPressed(){
     console.log(this.state);
+    //在这里处理mon
     const requestOptions={
         method: "POST",
         headers: {
@@ -61,6 +79,23 @@ class Modal extends Component {
           repeat: e.target.value,
       });
     }
+
+    handleWeekChange(id){
+        let selected = this.state.selected
+          let find = selected.indexOf(id)
+
+          if(find > -1) {
+            selected.splice(find, 1)
+          } else {
+            selected.push(id)
+          }
+
+          this.setState({ selected })
+    }
+
+     // React Checkboxes onChange Methods
+
+
   // 首次渲染使用父组件的状态更新modal中的visible状态，只调用一次
   componentDidMount() {
     this.setState({ visible: this.props.visible })
@@ -77,6 +112,8 @@ class Modal extends Component {
     onClose && onClose();
     this.setState({ visible: false })
   }
+
+
 
 
   render() {
@@ -115,47 +152,65 @@ class Modal extends Component {
                 </FormHelperText>
             </FormControl>
 <br/>
+            <form>
+
+</form>
              <FormControl component="fieldset">
-      {/*<FormLabel component="legend">Label Placement</FormLabel>*/}
 
       <FormGroup aria-label="position" row>
-        <FormControlLabel
-          value="M"
-          control={<Checkbox color="primary" />}
-          label="M"
-          labelPlacement="top"
-        />
-        <FormControlLabel
-          value="Tu"
-          control={<Checkbox color="primary" />}
-          label="Tu"
-          labelPlacement="top"
-        />        <FormControlLabel
-          value="W"
-          control={<Checkbox color="primary" />}
-          label="W"
-          labelPlacement="top"
-        />        <FormControlLabel
-          value="Th"
-          control={<Checkbox color="primary" />}
-          label="Th"
-          labelPlacement="top"
-        />        <FormControlLabel
-          value="F"
-          control={<Checkbox color="primary" />}
-          label="F"
-          labelPlacement="top"
-        />        <FormControlLabel
-          value="Sa"
-          control={<Checkbox color="primary" />}
-          label="Sa"
-          labelPlacement="top"
-        />        <FormControlLabel
-          value="Su"
-          control={<Checkbox color="primary" />}
-          label="Su"
-          labelPlacement="top"
-        />
+                 { JSON.stringify(this.state.selected) }
+
+  {
+    this.state.week.map(item => {
+      return (
+        <label key={ item.id } position="bottom">
+          <input type="checkbox"
+  onChange={ () => this.handleWeekChange(item.id) }
+  selected={ this.state.selected.includes(item.id) }
+  ></input>
+          <span>{ item.name }</span>
+        </label>
+      )
+    })
+  }
+
+        {/*<FormControlLabel*/}
+          {/*value="M"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="M"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>*/}
+        {/*<FormControlLabel*/}
+          {/*value="Tu"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="Tu"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>        <FormControlLabel*/}
+          {/*value="W"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="W"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>        <FormControlLabel*/}
+          {/*value="Th"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="Th"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>        <FormControlLabel*/}
+          {/*value="F"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="F"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>        <FormControlLabel*/}
+          {/*value="Sa"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="Sa"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>        <FormControlLabel*/}
+          {/*value="Su"*/}
+          {/*control={<Checkbox color="primary" />}*/}
+          {/*label="Su"*/}
+          {/*labelPlacement="top"*/}
+        {/*/>*/}
       </FormGroup>
                   <FormHelperText>
         <div align = "center">Weekly Schedule</div>
