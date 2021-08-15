@@ -47,19 +47,22 @@ class Modal extends Component {
   }
 
   handleConfirmButtonPressed(){
+
     console.log(this.state);
     //在这里处理mon
+
     const requestOptions={
         method: "POST",
         headers: {
                 'Accept': 'application/json, text/plain',
                 'Content-Type': 'application/json;charset=UTF-8'
             },
+
         body:JSON.stringify({
             user_ID : 1,
             name   : this.state.name,
             repeat : this.state.repeat,
-            week : "1111111",
+            week : this.state.selected.toString()
     }),
     };
     fetch('/API/create-task',requestOptions).then((response)=>response.json()).then((data)=>console.log(data));
