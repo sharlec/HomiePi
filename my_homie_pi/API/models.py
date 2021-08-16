@@ -19,6 +19,16 @@ class task(models.Model):
     repeat = models.IntegerField(max_length=7, unique=False, null=False, default="1")
     start_date = models.DateTimeField(auto_now_add=True)
 
+class record(models.Model):
+    user_ID = models.IntegerField(null=False)
+    task_ID = models.IntegerField(null=False)
+    task_name = models.CharField(max_length=20, unique=True,null=False, default=None)
+    complete = models.IntegerField(null=False, default = 0)
+    repeat = models.IntegerField(null = False, default = 0)
+    date = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user_ID', 'task_ID', 'date')
 
 # class record(models.Model):
 #     user_ID = models.IntegerField(null=False, default=0)

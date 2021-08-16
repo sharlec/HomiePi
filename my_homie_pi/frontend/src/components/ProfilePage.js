@@ -17,6 +17,7 @@ export default class ProfilePage extends Component{
 
         this.showModal = this.showModal.bind(this);
         this.state = {
+            id: null,
             gender : "M",
             name   : null,
             age    : null,
@@ -25,6 +26,7 @@ export default class ProfilePage extends Component{
 
         this.user_name = this.props.match.params.user_name;
         this.getUserDetails();
+        this.getUserRecords();
     }
 
     showModal() {
@@ -36,6 +38,7 @@ export default class ProfilePage extends Component{
       .then((response) => response.json())
       .then((data) => {
         this.setState({
+            id: data.id,
           name: data.name,
           age: data.age,
           gender: data.gender,
@@ -48,7 +51,8 @@ export default class ProfilePage extends Component{
         return (
       <div>
       <h3>{this.user_name}</h3>
-        <p>name: {this.state.name}</p>
+        <p>ID: {this.state.id}</p>
+           <p>name: {this.state.name}</p>
         <p>age: {this.state.age}</p>
         <p>gender: {this.state.gender}</p>
          <button onClick={this.showModal}>click here</button>

@@ -42,7 +42,7 @@ export default class LoginPage extends Component{
   }
 
       handleRegisterButtonPressed(){
-// onclick直接跳转registerpage
+// onclick直接跳转registerpager
 
     }
 
@@ -111,8 +111,7 @@ export default class LoginPage extends Component{
                 Register
             </Button>
         </Grid>
-        <br/><br/><br/>
-        <h3>The following is the record</h3>
+
         </Grid>
 
         )

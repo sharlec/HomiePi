@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import user,task
+from .models import user,task,record
 
 
 class userSerializer(serializers.ModelSerializer):
@@ -21,3 +21,8 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = task
         fields = ('user_ID', 'repeat', 'name', 'week')
+
+class recordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = record
+        fields = '__all__'

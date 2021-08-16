@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'rest_framework',
     'API',
     'frontend',
+
+]
+CRONJOBS = [
+    ('*/1 * * * *', 'API.updateRecord.minuteUpdate', '>> ./cron_job.log')
 ]
 
 MIDDLEWARE = [
