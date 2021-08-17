@@ -17,16 +17,17 @@ export default class ProfilePage extends Component{
 
         this.showModal = this.showModal.bind(this);
         this.state = {
-            id: null,
+            user_ID: null,
             gender : "M",
             name   : null,
             age    : null,
+            daily_record : [],
             visible: false,
           };
 
-        this.user_name = this.props.match.params.user_name;
+        this.user_ID = this.props.match.params.user_ID;
         this.getUserDetails();
-        this.getUserRecords();
+
     }
 
     showModal() {
@@ -34,17 +35,29 @@ export default class ProfilePage extends Component{
   }
 
     getUserDetails() {
-    fetch("/API/get-user" + "?user_name=" + this.user_name)
+    fetch("/API/get-user" + "?user_ID=" + this.user_ID)
       .then((response) => response.json())
       .then((data) => {
         this.setState({
-            id: data.id,
+            user_ID: data.id,
           name: data.name,
           age: data.age,
           gender: data.gender,
         });
       });
+    this.getUserRecords();
   }
+      getUserRecords() {
+ console.log(this.state)
+    fetch("/API/get-user-record" + "?user_ID=" + this.user_ID)
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({
+        daily_record: data[0]
+        });
+      });
+  }
+
 
   render() {
         const { visible } = this.state
@@ -60,6 +73,7 @@ export default class ProfilePage extends Component{
 
                   <br/><br/><br/>
         <h3>The following is the record</h3>
+          <p>task: {this.state.daily_record.task_name}</p>
       </div>
     );
   }

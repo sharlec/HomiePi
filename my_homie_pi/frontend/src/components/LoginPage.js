@@ -16,18 +16,16 @@ export default class LoginPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            gender : null,
-            name   : null,
-            age    : null,
+            user_name   : null,
             password: null,
     };
-        this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
+
         this.handleLoginButtonPressed = this.handleLoginButtonPressed.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
 
-    handleNameChange(e) {
+    handleUserNameChange(e) {
     this.setState({
       name: e.target.value,
 
@@ -41,10 +39,6 @@ export default class LoginPage extends Component{
     });
   }
 
-      handleRegisterButtonPressed(){
-// onclick直接跳转registerpager
-
-    }
 
     handleLoginButtonPressed(){
         const requestOptions={
@@ -81,7 +75,7 @@ export default class LoginPage extends Component{
                     onChange={this.handleNameChange}
                 />
                 <FormHelperText>
-                    <div align = "center">Name</div>
+                    <div align = "center">User Name</div>
                 </FormHelperText>
             </FormControl>
         </Grid>

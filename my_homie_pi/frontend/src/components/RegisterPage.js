@@ -16,22 +16,44 @@ export default class RegisterPagePage extends Component{
         super(props);
         this.state = {
             gender : "M",
-            name   : null,
-            age    : null,
+            user_name   : null,
+            first_name  : null,
+            last_name   : null,
             password   : null,
+            age    : null,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
+        this.handleLastNameChange = this.handleLastNameChange.bind(this);
+        this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
 
-  handleGenderChange(e) {
+    handleUserNameChange(e) {
     this.setState({
-      gender: e.target.value,
+      user_name: e.target.value,
     });
   }
+
+    handleFirstNameChange(e) {
+    this.setState({
+      first_name: e.target.value,
+    });
+  }
+
+    handleLastNameChange(e) {
+    this.setState({
+      last_name: e.target.value,
+    });
+  }
+
+    handleGenderChange(e) {
+        this.setState({
+          gender: e.target.value,
+        });
+      }
 
     handlePasswordChange(e) {
     this.setState({
@@ -39,11 +61,6 @@ export default class RegisterPagePage extends Component{
     });
   }
 
-      handleNameChange(e) {
-    this.setState({
-      name: e.target.value,
-    });
-  }
     handleAgeChange(e) {
     this.setState({
       age: e.target.value,
@@ -60,12 +77,14 @@ export default class RegisterPagePage extends Component{
             },
             body:JSON.stringify({
                 gender: this.state.gender,
-                name:   this.state.name,
-                age:    this.state.age,
+                user_name:   this.state.user_name,
                 password:   this.state.password,
+                first_name: this.state.first_name,
+                last_name: this.state.last_name,
+                age:    this.state.age,
         }),
         };
-        fetch('/API/create-user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        fetch('/API/user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
     }
 
     render(){
@@ -108,10 +127,10 @@ export default class RegisterPagePage extends Component{
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    onChange={this.handleNameChange}
+                    onChange={this.handleFirstNameChange}
                 />
                 <FormHelperText>
-                    <div align = "center">Name</div>
+                    <div align = "center">First Name</div>
                 </FormHelperText>
             </FormControl>
         </Grid>
@@ -121,6 +140,38 @@ export default class RegisterPagePage extends Component{
                 <TextField
                     required={true}
                     type="text"
+                    inputProps={{
+                        style:{textAlign:"center"},
+                    }}
+                    onChange={this.handleLastNameChange}
+                />
+                <FormHelperText>
+                    <div align = "center">Last Name</div>
+                </FormHelperText>
+            </FormControl>
+        </Grid>
+
+        <Grid item xs={12} align="center">
+            <FormControl>
+                <TextField
+                    required={true}
+                    type="text"
+                    inputProps={{
+                        style:{textAlign:"center"},
+                    }}
+                    onChange={this.handleUserNameChange}
+                />
+                <FormHelperText>
+                    <div align = "center">User Name</div>
+                </FormHelperText>
+            </FormControl>
+        </Grid>
+
+        <Grid item xs={12} align="center">
+            <FormControl>
+                <TextField
+                    required={true}
+                    type="password"
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
