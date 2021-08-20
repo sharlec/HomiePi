@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'django_truncate',
     'rest_framework',
+    'rest_framework.authtoken',
     'API',
     'frontend',
 
@@ -108,7 +109,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+REST_FRAMEWORK = {
+  'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework.authentication.BasicAuthentication',
+   )
+}
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 

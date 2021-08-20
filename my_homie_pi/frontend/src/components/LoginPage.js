@@ -6,6 +6,8 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
+import Cookies from 'js-cookie';
+import cookie from "react-cookie";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -16,7 +18,7 @@ export default class LoginPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            user_name   : null,
+            username   : null,
             password: null,
     };
 
@@ -27,7 +29,7 @@ export default class LoginPage extends Component{
 
     handleUserNameChange(e) {
     this.setState({
-      name: e.target.value,
+      username: e.target.value,
 
     });
     console.log(this.state)
@@ -37,22 +39,36 @@ export default class LoginPage extends Component{
     this.setState({
       password: e.target.value,
     });
+        console.log(this.state)
   }
 
 
     handleLoginButtonPressed(){
+        console.log(this.state);
         const requestOptions={
-            method: "GET",
-            header:{'Content-Type':'application/json'},
+            method: "POST",
+             'X-CSRF-TOKEN': document.getElementsByName('csrf-token')[0].content,
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8',
+                'X-CSRFToken': Cookies.get('csrftoken'),
+
+            },
+             body:JSON.stringify({
+                // gender: this.state.gender,
+                username:   this.state.username,
+                password:   this.state.password,
+        }),
         };
 
-        fetch('/API/get-user?user_name='+this.state.name, requestOptions).then((response)=>response.json()).then(
-            data => {
-                if (data.name) {
-                    this.props.history.push("profile/" + this.state.name)
-                } else console.log()
-            }
-        )
+        fetch('/API/login',requestOptions).then((response)=>response.json()).then((data)=>console.log(data.token))
+        // fetch('/API/login', requestOptions).then((response)=>response.json()).then(
+        //     data => {
+        //         if (data.name) {
+        //             this.props.history.push("profile/" + this.state.name)
+        //         } else console.log()
+        //     }
+        // )
     }
 
     render(){
@@ -64,15 +80,18 @@ export default class LoginPage extends Component{
           </Typography>
         </Grid>
 
+
+
         <Grid item xs={12} align="center">
             <FormControl>
+                <meta name="csrf-token" content="{{ csrf_token() }}" />
                 <TextField
                     required={true}
                     type="text"
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    onChange={this.handleNameChange}
+                    onChange={this.handleUserNameChange}
                 />
                 <FormHelperText>
                     <div align = "center">User Name</div>

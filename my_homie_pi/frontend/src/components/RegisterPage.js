@@ -16,7 +16,7 @@ export default class RegisterPagePage extends Component{
         super(props);
         this.state = {
             gender : "M",
-            user_name   : null,
+            username   : null,
             first_name  : null,
             last_name   : null,
             password   : null,
@@ -33,7 +33,7 @@ export default class RegisterPagePage extends Component{
 
     handleUserNameChange(e) {
     this.setState({
-      user_name: e.target.value,
+      username: e.target.value,
     });
   }
 
@@ -76,12 +76,13 @@ export default class RegisterPagePage extends Component{
                 'Content-Type': 'application/json;charset=UTF-8'
             },
             body:JSON.stringify({
-                gender: this.state.gender,
-                user_name:   this.state.user_name,
+                // gender: this.state.gender,
+                username:   this.state.username,
                 password:   this.state.password,
                 first_name: this.state.first_name,
                 last_name: this.state.last_name,
-                age:    this.state.age,
+                // age:    this.state.age,
+                profile: {age: this.state.age, gender: this.state.gender}
         }),
         };
         fetch('/API/user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
