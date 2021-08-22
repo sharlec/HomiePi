@@ -13,18 +13,18 @@ class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(required=True)
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'profile', 'password')
+        fields = ('first_name', 'last_name', 'username', 'profile', 'password','is_active')
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
 
         # create user
-        user = User.objects.create(
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
             first_name = validated_data['first_name'],
             last_name = validated_data['last_name'],
-            username = validated_data['username'],
-            password = validated_data['password'],
-            # profile = validated_data['profile'],
+            is_active = True
         )
 
         # create profile
@@ -36,36 +36,40 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class loginSerializer(serializers.Serializer):
-    # username = serializers.CharField(max_length=255)
-    # password = serializers.CharField(
-    #     label=("Password"),
-    #     style={'input_type': 'password'},
-    #     trim_whitespace=False,
-    #     max_length=128,
-    #     write_only=True
-    # )
-    class Meta:
-        model = User
-        fields = ('username', 'password')
-
-
-    def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-
-        if username and password:
-            user = authenticate(request=self.context.get('request'),
-                                username=username, password=password)
-            if not user:
-                msg = ('Unable to log in with provided credentials.')
-                raise serializers.ValidationError(msg, code='authorization')
-        else:
-            msg = ('Must include "username" and "password".')
-            raise serializers.ValidationError(msg, code='authorization')
-
-        data['user'] = user
-        return data
+# class loginSerializer(serializers.Serializer):
+#     # username = serializers.CharField(max_length=255)
+#     # password = serializers.CharField(
+#     #     label=("Password"),
+#     #     style={'input_type': 'password'},
+#     #     trim_whitespace=False,
+#     #     max_length=128,
+#     #     write_only=True
+#     # )
+#     class Meta:
+#         model = User
+#         fields = ('username', 'password')
+#
+#
+#     def validate(self, data):
+#         username = data['username']
+#         password = data.get('password')
+#         print(data.keys())
+#
+#
+#         if username and password:
+#
+#             user = authenticate(request=self.context.get('request'),
+#                                 username=username, password=password)
+#             if not user:
+#                 msg = ('Unable to log in with provided credentials.')
+#                 raise serializers.ValidationError(msg, code='authorization')
+#         else:
+#             msg = ('Must include "username" and "password".')
+#             # print("hi")
+#             raise serializers.ValidationError(msg, code='authorization')
+#
+#         data['user'] = user
+#         return data
 
 
 

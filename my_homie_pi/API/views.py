@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import UserSerializer,CreateUserSerializer, taskSerializer, CreateTaskSerializer, recordSerializer, loginSerializer
+from .serializers import UserSerializer,CreateUserSerializer, taskSerializer, CreateTaskSerializer, recordSerializer
 from .models import UserProfile, task, record
 from  rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,24 +9,23 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from rest_framework.decorators import api_view
-
-
-# Create your views here.
+from django.contrib import auth
+from rest_framework import permissions
 from django.http import HttpResponse    # 引用HttpResponse类
-# Create your views here.
+
+from rest_framework import permissions
+from django.conf import settings
+
 def index(request):
     return render(request,"index.html")
-
-
-# @login_required
-# def profile(request, pk):
-#     user = get_object_or_404(User, pk=pk)
-#     return render(request, 'users/profile.html', {'user': user})
 
 class userView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    permission_classes = (permissions.AllowAny, )
+
+    # this is for registration
     def post(self, request, format = None):
         serializer = self.serializer_class(data = request.data)
         if serializer.is_valid():
@@ -35,21 +34,44 @@ class userView(generics.ListAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["POST"])
-def my_view(request):
-    serializer = loginSerializer(data = request.data)
-    if serializer.is_valid(raise_exception=True):
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({"status": status.HTTP_200_OK, "Token": token.key})
-    else:
+class LoginView(APIView):
+    permission_classes = (permissions.AllowAny, )
+    def post(self, request, format=None):
+        data = self.request.data
+        username = data['username']
+        password = data['password']
+        try:
+            print('21')
+            c = User.objects.all().filter(username=username, password =password)
+            print('d')
+            # print(c[0].username)
+            user = auth.authenticate(request, username=username, password=password)
+            print(user.id)
+            if user is not None:
+                print("here")
 
-        return Response(serializer.errors, status=status.HTTP_230_BAD_REQUEST)
+                # return Response({
+                #     "user": UserSerializer(user, context=self.get_serializer_context()).data,
+                #     "token": AuthToken.objects.create(user)[1]
+                # })
+                auth.login(request, user)
+                print(user.username)
+                # # Redirect to a success page.
+                # return Response(status=status.HTTP_201_CREATED)
+                return Response({ 'success': 'User authenticated' })
+                # return redirect("./user")
+            else:
+                print('o huo')
+                return Response({ 'error': 'Error Authenticating' })
+        except:
+            return Response({ 'error': 'Something went wrong when logging in' })
 
-# class recordView(generics.ListAPIView):
-#     queryset = record.objects.all()
-#     serializer_class = recordSerializer
-#     serializer = self.serializer_class(data=request.data)
+
+class recordView(generics.ListAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = record.objects.all()
+    serializer_class = recordSerializer
+    # serializer = self.serializer_class(data=request.data)
 
 
 # class createUserView(APIView):

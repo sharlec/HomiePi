@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Cookies from 'js-cookie';
 
 
 export default class RegisterPagePage extends Component{
@@ -20,7 +21,7 @@ export default class RegisterPagePage extends Component{
             first_name  : null,
             last_name   : null,
             password   : null,
-            age    : null,
+            age    : 0,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
@@ -73,7 +74,8 @@ export default class RegisterPagePage extends Component{
             method: "POST",
             headers: {
                 'Accept': 'application/json, text/plain',
-                'Content-Type': 'application/json;charset=UTF-8'
+                'Content-Type': 'application/json;charset=UTF-8',
+                'X-CSRFToken': Cookies.get('csrftoken'),
             },
             body:JSON.stringify({
                 // gender: this.state.gender,
@@ -99,6 +101,7 @@ export default class RegisterPagePage extends Component{
 
         <Grid item xs={12} align="center">
           <FormControl component="fieldset" >
+              <meta name="csrf-token" content="{{ csrf_token() }}" />
             <FormHelperText>
               <div align="center">Register a new user here</div>
             </FormHelperText>

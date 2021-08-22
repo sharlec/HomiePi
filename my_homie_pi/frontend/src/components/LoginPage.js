@@ -42,6 +42,7 @@ export default class LoginPage extends Component{
         console.log(this.state)
   }
 
+  // curl -H "Content-Type: application/json" -X POST -d '{"username":"charles","password":"123"}' http://127.0.0.1:8000/API/login
 
     handleLoginButtonPressed(){
         console.log(this.state);
@@ -60,12 +61,12 @@ export default class LoginPage extends Component{
                 password:   this.state.password,
         }),
         };
-
-        fetch('/API/login',requestOptions).then((response)=>response.json()).then((data)=>console.log(data.token))
+        fetch('/API/login',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        // console.log(this.state)
         // fetch('/API/login', requestOptions).then((response)=>response.json()).then(
         //     data => {
         //         if (data.name) {
-        //             this.props.history.push("profile/" + this.state.name)
+        //             this.props.history.push("dashboard")
         //         } else console.log()
         //     }
         // )
