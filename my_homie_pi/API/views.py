@@ -11,10 +11,15 @@ from django.contrib.auth import authenticate, login
 from rest_framework.decorators import api_view
 from django.contrib import auth
 from rest_framework import permissions
-from django.http import HttpResponse    # 引用HttpResponse类
+from django.http import HttpResponse
 
+from django.conf import settings
+from jose import jwt
 from rest_framework import permissions
 from django.conf import settings
+
+from rest_framework_simplejwt import authentication
+
 
 def index(request):
     return render(request,"index.html")
@@ -49,12 +54,15 @@ class LoginView(APIView):
             print(user.id)
             if user is not None:
                 print("here")
-
+                data = {"user_id": user.id,
+                        "exp": datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)}
+                # token = jwt.encode(data, settings.JWT_SECRET_KEY, algorithm=settings.ALGORITHM)
+                # print(token)
                 # return Response({
                 #     "user": UserSerializer(user, context=self.get_serializer_context()).data,
                 #     "token": AuthToken.objects.create(user)[1]
                 # })
-                auth.login(request, user)
+                # auth.login(request, user)
                 print(user.username)
                 # # Redirect to a success page.
                 # return Response(status=status.HTTP_201_CREATED)
@@ -67,12 +75,23 @@ class LoginView(APIView):
             return Response({ 'error': 'Something went wrong when logging in' })
 
 
+class TestView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = (authentication.JWTAuthentication,)
+    def get(self, request, *args, **kwargs):
+        return Response('ok')
+
 class recordView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = record.objects.all()
     serializer_class = recordSerializer
     # serializer = self.serializer_class(data=request.data)
 
+class dashBoardView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = (authentication.JWTAuthentication,)
+    def get(self, request, *args, **kwargs):
+        return Response('ok')
 
 # class createUserView(APIView):
 #     serializer_class = CreateUserSerializer

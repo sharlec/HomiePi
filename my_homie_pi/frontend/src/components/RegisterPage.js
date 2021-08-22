@@ -88,6 +88,8 @@ export default class RegisterPagePage extends Component{
         }),
         };
         fetch('/API/user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        // if success, then redirect to login or dashboard
+        // give success information
     }
 
     render(){

@@ -48,11 +48,9 @@ export default class LoginPage extends Component{
         console.log(this.state);
         const requestOptions={
             method: "POST",
-             'X-CSRF-TOKEN': document.getElementsByName('csrf-token')[0].content,
             headers: {
                 'Accept': 'application/json, text/plain',
                 'Content-Type': 'application/json;charset=UTF-8',
-                'X-CSRFToken': Cookies.get('csrftoken'),
 
             },
              body:JSON.stringify({
@@ -61,31 +59,37 @@ export default class LoginPage extends Component{
                 password:   this.state.password,
         }),
         };
-        fetch('/API/login',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        // fetch('/API/login',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
         // console.log(this.state)
-        // fetch('/API/login', requestOptions).then((response)=>response.json()).then(
-        //     data => {
-        //         if (data.name) {
-        //             this.props.history.push("dashboard")
-        //         } else console.log()
-        //     }
-        // )
+        fetch('/API/login', requestOptions).then((response)=>response.json()).then(
+            data => {
+                if (data.access) {
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+
+                    this.props.history.push("dashboard")
+                } else console.log()
+            }
+        )
     }
 
     render(){
         return(
-        <Grid container spacing={1}>
+        <Grid container spacing={1}   container
+  spacing={0}
+  direction="column"
+  alignItems="center"
+  justify="center"
+  style={{ minHeight: '100vh' }}>
         <Grid item xs={12} align="center">
-          <Typography component="h4" variant="h4">
+          <Typography component="h3" variant="h3">
             Login
           </Typography>
         </Grid>
 
 
-
         <Grid item xs={12} align="center">
             <FormControl>
-                <meta name="csrf-token" content="{{ csrf_token() }}" />
                 <TextField
                     required={true}
                     type="text"
@@ -98,6 +102,7 @@ export default class LoginPage extends Component{
                     <div align = "center">User Name</div>
                 </FormHelperText>
             </FormControl>
+
         </Grid>
 
        <Grid item xs={12} align="center">

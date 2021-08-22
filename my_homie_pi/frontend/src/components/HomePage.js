@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ProfilePage from "./ProfilePage";
+import Dashboard from "./Dashboard";
 import TaskPage from "./TaskPage";
 import RegisterPage from "./RegisterPage"
 import LoginPage from "./LoginPage"
@@ -15,8 +15,8 @@ export default class HomePage extends Component{
             <Switch>
                 {/*<Route exact path='/'><p>This is the Home Page</p></Route>*/}
 
-                <Route path='/profile/:user_name' component={ProfilePage} />
-                <Route path='/dashboard' component={ProfilePage} />
+                <Route path='/profile/:user_name' component={Dashboard} />
+                <Route path='/dashboard' component={Dashboard} />
                 <Route path='/task' component={TaskPage} />
                 <Route path='/register' component={RegisterPage} />
                 <Route path='/' component={LoginPage} />

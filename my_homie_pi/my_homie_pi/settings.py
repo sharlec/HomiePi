@@ -113,11 +113,34 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
+
+# REST_FRAMEWORK = {
+#     # 异常处理
+#     'EXCEPTION_HANDLER': 'luffy.utils.exceptions.custom_exception_handler',
+#     # 用户登陆认证方式
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#     ),
+# }
+
+
+# jwt载荷中的有效期设置
+# JWT_AUTH = {
+#     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1), # 有效期设置
+#     'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
+# }
+
+# JWT_SECRET_KEY = "0dcb42e12219beab48e811926bedaf827fe99acdad44ba381117d7e29648acf4"
+# ALGORITHM = "HS256"
+# ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 # Internationalization
