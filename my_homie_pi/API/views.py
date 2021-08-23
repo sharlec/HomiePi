@@ -1,11 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from .serializers import UserSerializer,CreateUserSerializer, taskSerializer, CreateTaskSerializer, recordSerializer
 from .models import UserProfile, task, record
-from  rest_framework.views import APIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from rest_framework.decorators import api_view
@@ -14,11 +13,10 @@ from rest_framework import permissions
 from django.http import HttpResponse
 
 from django.conf import settings
-from jose import jwt
-from rest_framework import permissions
-from django.conf import settings
+
 
 from rest_framework_simplejwt import authentication
+from django.core import serializers
 
 
 def index(request):
@@ -29,7 +27,6 @@ class userView(generics.ListAPIView):
     serializer_class = UserSerializer
 
     permission_classes = (permissions.AllowAny, )
-
     # this is for registration
     def post(self, request, format = None):
         serializer = self.serializer_class(data = request.data)
@@ -38,47 +35,11 @@ class userView(generics.ListAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class LoginView(APIView):
-    permission_classes = (permissions.AllowAny, )
-    def post(self, request, format=None):
-        data = self.request.data
-        username = data['username']
-        password = data['password']
-        try:
-            print('21')
-            c = User.objects.all().filter(username=username, password =password)
-            print('d')
-            # print(c[0].username)
-            user = auth.authenticate(request, username=username, password=password)
-            print(user.id)
-            if user is not None:
-                print("here")
-                data = {"user_id": user.id,
-                        "exp": datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)}
-                # token = jwt.encode(data, settings.JWT_SECRET_KEY, algorithm=settings.ALGORITHM)
-                # print(token)
-                # return Response({
-                #     "user": UserSerializer(user, context=self.get_serializer_context()).data,
-                #     "token": AuthToken.objects.create(user)[1]
-                # })
-                # auth.login(request, user)
-                print(user.username)
-                # # Redirect to a success page.
-                # return Response(status=status.HTTP_201_CREATED)
-                return Response({ 'success': 'User authenticated' })
-                # return redirect("./user")
-            else:
-                print('o huo')
-                return Response({ 'error': 'Error Authenticating' })
-        except:
-            return Response({ 'error': 'Something went wrong when logging in' })
-
-
 class TestView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = (authentication.JWTAuthentication,)
     def get(self, request, *args, **kwargs):
+        # print(self.authentication_classes.get_user().username)
         return Response('ok')
 
 class recordView(generics.ListAPIView):
@@ -91,27 +52,21 @@ class dashBoardView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = (authentication.JWTAuthentication,)
     def get(self, request, *args, **kwargs):
-        return Response('ok')
+        JWT_authenticator = authentication.JWTAuthentication()
+        response = JWT_authenticator.authenticate(request)
+        user, token = response
+        print(type(user.username))
+        print(token.payload)
+        data = {'username': user.username,
+                'age': user.profile.age,
+                'gender': user.profile.gender,
+                'task_list':[]}
 
-# class createUserView(APIView):
-#     serializer_class = CreateUserSerializer
-#     def post(self, request, format=None):
-#         serializer = self.serializer_class(data = request.data)
-#         if serializer.is_valid():
-#             name = serializer.data.get('name')
-#             age = serializer.data.get('age')
-#             queryset = user.objects.filter(name=name)
-#             if queryset.exists():
-#                 print("already exists")
-#                 new_user = user(name=name, age=age)
-#                 # new_user.save()
-#                 return Response(UserSerializer(new_user).data, status=status.HTTP_200)
-#             else:
-#                 new_user = user(name = name,age=age)
-#                 new_user.save()
-#                 return Response(UserSerializer(new_user).data, status=status.HTTP_201_CREATED)
-#         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(data, status = status.HTTP_200_OK)
+class taskView(generics.ListAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = task.objects.all()
+    serializer_class = taskSerializer
 
 
 # class createTaskView(APIView):

@@ -1,6 +1,7 @@
 import App from  "./components/App";
 
 
+//鲜艳
 var colors = new Array(
     [135,206,250],
     [250,250,210],
@@ -8,6 +9,16 @@ var colors = new Array(
     [240,128,128],
     [221,160,221],
     [147,112,219]);
+
+
+//莫兰迪
+// var colors = new Array(
+//     [193,203,215],
+//     [181,196,177],
+//     [253,249,238],
+//     [218,218,216],
+//     [238,229,248],
+//     [234,208,209]);
 
   var step = 0;
   //color table indices for:

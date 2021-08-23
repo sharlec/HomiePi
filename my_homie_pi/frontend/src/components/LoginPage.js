@@ -51,16 +51,13 @@ export default class LoginPage extends Component{
             headers: {
                 'Accept': 'application/json, text/plain',
                 'Content-Type': 'application/json;charset=UTF-8',
-
             },
              body:JSON.stringify({
-                // gender: this.state.gender,
                 username:   this.state.username,
                 password:   this.state.password,
         }),
         };
-        // fetch('/API/login',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
-        // console.log(this.state)
+
         fetch('/API/login', requestOptions).then((response)=>response.json()).then(
             data => {
                 if (data.access) {
