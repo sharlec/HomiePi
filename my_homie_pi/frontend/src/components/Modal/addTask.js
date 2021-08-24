@@ -176,44 +176,6 @@ class Modal extends Component {
       )
     })
   }
-
-        {/*<FormControlLabel*/}
-          {/*value="M"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="M"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>*/}
-        {/*<FormControlLabel*/}
-          {/*value="Tu"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="Tu"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>        <FormControlLabel*/}
-          {/*value="W"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="W"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>        <FormControlLabel*/}
-          {/*value="Th"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="Th"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>        <FormControlLabel*/}
-          {/*value="F"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="F"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>        <FormControlLabel*/}
-          {/*value="Sa"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="Sa"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>        <FormControlLabel*/}
-          {/*value="Su"*/}
-          {/*control={<Checkbox color="primary" />}*/}
-          {/*label="Su"*/}
-          {/*labelPlacement="top"*/}
-        {/*/>*/}
       </FormGroup>
                   <FormHelperText>
         <div align = "center">Weekly Schedule</div>
@@ -221,7 +183,6 @@ class Modal extends Component {
     </FormControl>
 
         </div>
-
         <div className="modal-operator">
                   <button
             onClick={this.handleConfirmButtonPressed}
@@ -234,9 +195,7 @@ class Modal extends Component {
 
         </div>
       </div>
-      {/*<div*/}
-        {/*className="mask"*/}
-      {/*></div>*/}
+
     </div>
   }
 }
