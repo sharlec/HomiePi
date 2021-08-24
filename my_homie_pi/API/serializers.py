@@ -35,48 +35,20 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-
-# class loginSerializer(serializers.Serializer):
-#     # username = serializers.CharField(max_length=255)
-#     # password = serializers.CharField(
-#     #     label=("Password"),
-#     #     style={'input_type': 'password'},
-#     #     trim_whitespace=False,
-#     #     max_length=128,
-#     #     write_only=True
-#     # )
-#     class Meta:
-#         model = User
-#         fields = ('username', 'password')
-#
-#
-#     def validate(self, data):
-#         username = data['username']
-#         password = data.get('password')
-#         print(data.keys())
-#
-#
-#         if username and password:
-#
-#             user = authenticate(request=self.context.get('request'),
-#                                 username=username, password=password)
-#             if not user:
-#                 msg = ('Unable to log in with provided credentials.')
-#                 raise serializers.ValidationError(msg, code='authorization')
-#         else:
-#             msg = ('Must include "username" and "password".')
-#             # print("hi")
-#             raise serializers.ValidationError(msg, code='authorization')
-#
-#         data['user'] = user
-#         return data
-
-
-
 class taskSerializer(serializers.ModelSerializer):
     class Meta:
         model = task
         fields = ('id','user_ID','repeat','name','week','start_date')
+
+        def create(self, validated_data):
+            # create user
+            task = Task.objects.create_user(
+                # username=validated_data['username'],
+                user_ID=validated_data['user_ID'],
+                repeat= validated_data['repeat'],
+                week= validated_data['week'],
+            )
+            return task
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:

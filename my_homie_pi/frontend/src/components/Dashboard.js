@@ -66,9 +66,10 @@ export default class Dashboard extends Component {
             gender: "M",
             username: null,
             age: null,
-            daily_record: [],
-            percent : 2,
+            percent : 0,
             visible: false,
+            task_list: [],
+            record_list: [],
         };
 
         this.user_ID = this.props.match.params.user_ID;
@@ -95,12 +96,16 @@ export default class Dashboard extends Component {
             data => {
                 if (data.username) {
                     this.setState({
-                        username: data.username,
-                        age: data.age,
-                        gender: data.gender,
+                        user_ID :   data.user_ID,
+                        username:   data.username,
+                        age     :   data.age,
+                        gender  :   data.gender,
+                        task_list:  data.task_list,
+                        record_list : data.record_list,
                     });
 
                     console.log(data)
+                    console.log(this.state)
                     // this.props.history.push("dashboard")
                 } else console.log()
             }
@@ -108,21 +113,31 @@ export default class Dashboard extends Component {
 
     }
 
-      increase () {
-        let percent = this.state.percent + 1;
-        if (percent > 3) {
-          percent = 3;
+      increase (index) {
+        let record_list = this.state.record_list;
+        let complete    = record_list[index]["complete"] + 1;
+        let repeat  =   record_list[index]["repeat"];
+
+        if (complete > repeat) {
+          complete = repeat;
         }
-        this.setState({ percent });
+        record_list[index]["complete"] = complete;
+
+        this.setState({ record_list });
       };
 
-      decrease (){
-        let percent = this.state.percent - 1;
-        if (percent < 0) {
-          percent = 0;
-        }
-        this.setState({ percent });
-      };
+      decrease (index) {
+          let record_list = this.state.record_list;
+          let complete = record_list[index]["complete"] - 1;
+
+          if (complete < 0) {
+              complete = 0;
+          }
+
+          record_list[index]["complete"] = complete;
+
+          this.setState({record_list});
+      }
 
 
     // handleLogoutButtonPressed() {
@@ -161,7 +176,7 @@ export default class Dashboard extends Component {
             style={{ minHeight: '100vh' }}
             xs  ={12}>
 
-      <Grid item align = "center" xs={4}>
+      <Grid item align = "center" xs={2}>
         <Grid container direction="column"
               align = "center">
             <Grid item><h3>Dashboard</h3></Grid>
@@ -180,23 +195,26 @@ export default class Dashboard extends Component {
         </Grid>
       </Grid>
 
-      <Grid item align="center"  xs={4}>
+      <Grid item align="center"  xs={5}>
         <Grid container
               direction="column">
             <Grid item xs={12}><h3>Today Agenda</h3></Grid>
                 <Grid container direction="row">
-                  <Grid item xs={8} algin="top">
+                    {this.state.record_list.map((record, index) => (
+                       <Grid item xs={12}>
                      <LinearProgress algin="center"
-                      variant="determinate"
-                      value={100 * (this.state.percent / 3)}
-                                     label={"Task"}
+                      variant="determinate" style={{ color: "#0ec44e" }}
+                      value={100 * (record["complete"] / record["repeat"])}
+                                     label={record["task_name"]}
                      />
-                     {/*<Typography variant="body6" color="textSecondary">{this.state.percent+"/3"}</Typography>*/}
+                             <Grid item xs={5}>
+                     <AddBoxIcon onClick={() => this.increase(index)}   style={{ color: "#0ec44e" }}  />
+                     <IndeterminateCheckBoxIcon onClick={() => { this.decrease(index);} } style={{color:"#f54278"}}/>
+                             </Grid>
+
                   </Grid>
-                     <Grid item xs={2} algin="top">
-                     <AddBoxIcon onClick={this.increase} style={{ color: "#0ec44e" }}  />
-                     <IndeterminateCheckBoxIcon onClick={this.decrease} style={{color:"#f54278"}}/>
-                     </Grid>
+  ))}
+
              </Grid>
         {/*</Grid>*/}
         </Grid>
@@ -206,6 +224,10 @@ export default class Dashboard extends Component {
     <Grid item align ="center" xs={4}>
         <Grid container direction="column" >
         <Grid item xs = {12}>Task Showlist</Grid>
+            {this.state.task_list.map(task => (
+                <p>{task['name']}</p>
+
+  ))}
                {/*<Button color = "primary"*/}
                        {/*variant="contained"*/}
                        {/*onClick ={this.showModal()}*/}

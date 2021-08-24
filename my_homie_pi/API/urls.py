@@ -2,9 +2,8 @@
 from django.urls import path
 from rest_framework.authtoken import views
 # from django.contrib.auth.views import login
-from .views import userView,recordView
 
-from .views import userView, TestView, dashBoardView
+from .views import userView, TestView, dashBoardView, taskView, recordView
 # from rest_framework_jwt.views import obtain_jwt_token
 
 from rest_framework_simplejwt.views import (
@@ -24,6 +23,8 @@ urlpatterns = [
     path(r'refresh', TokenRefreshView.as_view()),  # 需要添加的内容
     path(r'test', TestView.as_view()),  # 添加测试views的路由
     path(r'dashboard', dashBoardView.as_view()),  # 添加测试views的路由
+    path(r'task', taskView.as_view()),  # 添加测试views的路由
+    path('record', recordView.as_view()),
     # path(r"login", obtain_jwt_token),
     # path('login/', views.user_login),
     # path('logout/', views.user_logout),

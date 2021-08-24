@@ -11,12 +11,12 @@ from rest_framework.decorators import api_view
 from django.contrib import auth
 from rest_framework import permissions
 from django.http import HttpResponse
-
 from django.conf import settings
-
-
 from rest_framework_simplejwt import authentication
 from django.core import serializers
+import json
+import datetime
+
 
 
 def index(request):
@@ -55,24 +55,73 @@ class dashBoardView(APIView):
         JWT_authenticator = authentication.JWTAuthentication()
         response = JWT_authenticator.authenticate(request)
         user, token = response
-        print(type(user.username))
-        print(token.payload)
-        data = {'username': user.username,
+
+        taskset  = task.objects.filter(user_ID = user.id)
+        task_list = list(taskset.values())
+
+        now = datetime.datetime.now()
+        today_date = now.strftime("%Y-%m-%d")
+        recordset = record.objects.filter(user_ID =user.id, date = today_date)
+        record_list = list(recordset.values())
+
+        data = {'user_ID' : user.id,
+                'username': user.username,
                 'age': user.profile.age,
                 'gender': user.profile.gender,
-                'task_list':[]}
+                'task_list': task_list,
+                'record_list' : record_list}
 
         return Response(data, status = status.HTTP_200_OK)
+
 class taskView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
-    queryset = task.objects.all()
+    authentication_classes = (authentication.JWTAuthentication,)
+    # queryset = task.objects.all()
     serializer_class = taskSerializer
+
+    def post(self, request, format = None):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format = None):
+        JWT_authenticator = authentication.JWTAuthentication()
+        response = JWT_authenticator.authenticate(request)
+        # user, token = response
+        # print(user.ID)
+        queryset  = task.objects.filter(user_ID= 1)
+        # data = serializers.serialize('json', list(queryset))
+        dict1 = {}
+        obj = list(queryset.values())
+        print(obj)
+        dict1['data'] = obj
+
+        return Response(obj)
+
+
+        # return queryset
+
 
 
 # class createTaskView(APIView):
+#     # permission_classes = [permissions.IsAuthenticated]
+#     authentication_classes = (authentication.JWTAuthentication,)
 #     serializer_class = CreateTaskSerializer
+#     queryset = task.objects.all()
+#
+#
 #     def post(self, request, format=None):
+#         # JWT_authenticator = authentication.JWTAuthentication()
+#         # response = JWT_authenticator.authenticate(request)
+#         # user, token = response
+#
+#         # serializer = self.serializer_class(data=request.data)
 #         serializer = self.serializer_class(data = request.data)
+#         # username =  user.username
+#         # print(username)
+#         # print(serializer.data.get('name'))
 #         if serializer.is_valid():
 #             user_ID = serializer.data.get('user_ID')
 #             name = serializer.data.get('name')
@@ -87,9 +136,10 @@ class taskView(generics.ListAPIView):
 #                 new_task = task(user_ID=user_ID,name=name, repeat = repeat, week = week)
 #                 new_task.save()
 #                 return Response(UserSerializer(new_task).data, status=status.HTTP_201_CREATED)
-#         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#
+#         # return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response("OK")
+
+
 # class getUser(APIView):
 #     serializer_class = UserSerializer
 #     look_url_kwarg = 'user_ID'

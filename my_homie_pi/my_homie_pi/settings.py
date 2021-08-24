@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
 ]
 CRONJOBS = [
-    ('*/1 * * * * ', 'API.updateRecord.minuteUpdate', '>> ./cron_job.log')
+    ('*/1 * * * * ', 'API.updateRecord.recordUpdate', '>> ./cron_job.log')
 ]
 
 MIDDLEWARE = [
