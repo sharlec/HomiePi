@@ -1,26 +1,16 @@
 import React, { Component } from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { LinearProgress } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
+
+import { Row, Col } from 'antd';
+import {Button} from 'antd'
+// import 'antd/lib/button/style';
+// import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 
 
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-
-
-import clsx from "clsx";
 import Typography from "@material-ui/core/Typography";
-import FormHelperText from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
 
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl/FormControl";
-import TextField from "@material-ui/core/TextField/TextField";
+
 import Modal from './Modal/addTask'
 
 
@@ -47,11 +37,12 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-const useStyles = makeStyles({
-  root: {
-    width: '100%',
-  },
-});
+// const useStyles = makeStyles({
+//   root: {
+//     width: '100%',
+//   },
+// });
+
 
 
 export default class Dashboard extends Component {
@@ -140,169 +131,108 @@ export default class Dashboard extends Component {
       }
 
 
-    // handleLogoutButtonPressed() {
-    //     console.log(this.state);
-    //     const requestOptions = {
-    //         method: "POST",
-    //         headers: {
-    //             'Accept': 'application/json, text/plain',
-    //             'Content-Type': 'application/json;charset=UTF-8',
-    //         },
-    //         body: JSON.stringify({
-    //             username: this.state.username,
-    //             password: this.state.password,
-    //         }),
-    //     };
-    //
-    //     fetch('/API/login', requestOptions).then((response) => response.json()).then(
-    //         data => {
-    //             if (data.access) {
-    //                 localStorage.setItem('access_token', data.access);
-    //                 localStorage.setItem('refresh_token', data.refresh);
-    //
-    //                 this.props.history.push("dashboard")
-    //             } else console.log()
-    //         }
-    //     )
-    // }
+
 
   render() {
         const { visible } = this.state;
         return (
-
-    <Grid   container direction="row"
-            alignItems="center"
-            justify="center"
-            style={{ minHeight: '100vh' }}
-            xs  ={12}>
-
-      <Grid item align = "center" xs={2}>
-        <Grid container direction="column"
-              align = "center">
-            <Grid item><h3>Dashboard</h3></Grid>
-            <Grid item>username : {this.state.username}</Grid>
-            <Grid item>age : {this.state.age}</Grid>
-            <Grid item>gender : {this.state.gender}</Grid>
-            <Grid item>maybe photo</Grid>
-            <Grid item>
-                <Button color = "primary"
-                        variant="contained"
-                        onClick={this.handleLogoutButtonPressed}
-                        style={{ width: 80}}>
-                 Logout
-             </Button>
-        </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid item align="center"  xs={5}>
-        <Grid container
-              direction="column">
-            <Grid item xs={12}><h3>Today Agenda</h3></Grid>
-                <Grid container direction="row">
-                    {this.state.record_list.map((record, index) => (
-                       <Grid item xs={12}>
-                     <LinearProgress algin="center"
-                      variant="determinate" style={{ color: "#0ec44e" }}
-                      value={100 * (record["complete"] / record["repeat"])}
-                                     label={record["task_name"]}
-                     />
-                             <Grid item xs={5}>
-                     <AddBoxIcon onClick={() => this.increase(index)}   style={{ color: "#0ec44e" }}  />
-                     <IndeterminateCheckBoxIcon onClick={() => { this.decrease(index);} } style={{color:"#f54278"}}/>
-                             </Grid>
-
-                  </Grid>
-  ))}
-
-             </Grid>
-        {/*</Grid>*/}
-        </Grid>
-     </Grid>
+            <div>
+                 <Row gutter={24}>
+          <Col span={6} key={1}>
+              <h3>Profile</h3>
+          </Col>
+          <Col span={6} key={2}>
+              <h3>Progress</h3>
+          </Col>
+          <Col span={6} key={3}>
+              Task
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24} style={{ textAlign: 'center' }}>
+            <Button type="primary" htmlType="submit">确定</Button>
+            <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
+          </Col>
+        </Row>
+            </div>
 
 
-    <Grid item align ="center" xs={4}>
-        <Grid container direction="column" >
-        <Grid item xs = {12}>Task Showlist</Grid>
-            {this.state.task_list.map(task => (
-                <p>{task['name']}</p>
-
-  ))}
-               {/*<Button color = "primary"*/}
-                       {/*variant="contained"*/}
-                       {/*onClick ={this.showModal()}*/}
-                       {/*// style={{ width: 80}}*/}
-               {/*>*/}
-                {/*Add Task*/}
-            {/*</Button>*/}
-            <Grid item xs={12}>
-                <Button
-                    color = "primary"
-                    variant="contained"
-                    onClick={this.showModal}>click here
-                </Button>
-            <Modal visible={visible}></Modal></Grid>
-    </Grid>
-    </Grid>
-
-</Grid>
-
-
-      //   <Grid container direction="rows" justifyContent="center" alignItems="center" spacing={3} xs = {6}>
-      //   <Grid item xs={12} align="center">
-      //     <Typography component="h4" variant="h4">
-      //       Dashboard
-      //     </Typography>
-      //   </Grid>
-      //       <Grid item xs={12} align="center">
-      // <div>
-      // <h3>{this.user_name}</h3>
-      //      <p>name: {this.state.name}</p>
-      //   <p>age: {this.state.age}</p>
-      //   <p>gender: {this.state.gender}</p>
-      //    <button onClick={this.showModal}>click here</button>
-      //     <Modal visible={visible}></Modal>
-      //
-      //             <br/><br/><br/>
-      //   <h3>The following is the record</h3>
-      //     <p>task: {this.state.daily_record.task_name}</p>
-      // </div>
-      //       </Grid>
-      //   </Grid>
-
-       //  <Grid container direction="rows" justifyContent="center" alignItems="center" spacing={3} xs = {6}>
-       //
-       //  <Grid item xs={12} align="center">
-       //      <FormControl>
-       //          <TextField
-       //              required={true}
-       //              type="text"
-       //              inputProps={{
-       //                  style:{textAlign:"center"},
-       //              }}
-       //              onChange={this.handleUserNameChange}
-       //          />
-       //          <FormHelperText>
-       //              <div align = "center">User Name</div>
-       //          </FormHelperText>
-       //      </FormControl>
-       //  </Grid>
-       //
-       // <Grid item xs={12} align="center">
-       //      <Button color = "primary" variant="contained" onClick={this.handleLogoutButtonPressed} style={{ width: 80}}>
-       //          Logout
-       //      </Button>
-       //
-       //     <Button color = "secondary" variant="contained" to="/" component={Link} style={{ width: 80}}>
-       //          Back
-       //      </Button>
-       //  </Grid>
-       //
-       //  </Grid>
-
-
-
-    );
+//    // {/*<Grid   container direction="row"*/}
+// //             alignItems="center"
+// //             justify="center"
+//             {/*style={{ minHeight: '100vh' }}*/}
+//             {/*xs  ={12}>*/}
+//       {/*<Grid item align = "center" xs={2}>*/}
+// //         <Grid container direction="column"
+// //               align = "center">
+//             {/*<Grid item><h3>Dashboard</h3></Grid>*/}
+//             {/*<Grid item>username : {this.state.username}</Grid>*/}
+//             {/*<Grid item>age : {this.state.age}</Grid>*/}
+//             {/*<Grid item>gender : {this.state.gender}</Grid>*/}
+//             {/*<Grid item>maybe photo</Grid>*/}
+//             {/*<Grid item>*/}
+//                 {/*<Button color = "primary"*/}
+//                         {/*variant="contained"*/}
+// //                         onClick={this.handleLogoutButtonPressed}
+// //                         style={{ width: 80}}>
+//                  {/*Logout*/}
+//              {/*</Button>*/}
+//         {/*</Grid>*/}
+// //         </Grid>
+// //       </Grid>
+// //
+//       {/*<Grid item align="center"  xs={5}>*/}
+//         {/*<Grid container*/}
+//               {/*direction="column">*/}
+//             {/*<Grid item xs={12}><h3>Today Agenda</h3></Grid>*/}
+//                 {/*<Grid container direction="row">*/}
+//                     {/*{this.state.record_list.map((record, index) => (*/}
+//                        {/*<Grid item xs={12}>*/}
+// //                      <LinearProgress algin="center"
+// //                       variant="determinate" style={{ color: "#0ec44e" }}
+// //                       value={100 * (record["complete"] / record["repeat"])}
+//                                      {/*label={record["task_name"]}*/}
+//                      {/*/>*/}
+//                              {/*<Grid item xs={5}>*/}
+//                      {/*<AddBoxIcon onClick={() => this.increase(index)}   style={{ color: "#0ec44e" }}  />*/}
+// //                      <IndeterminateCheckBoxIcon onClick={() => { this.decrease(index);} } style={{color:"#f54278"}}/>
+//                              {/*</Grid>*/}
+//
+//                   {/*</Grid>*/}
+//   {/*))}*/}
+//
+// //              </Grid>
+// //         {/*</Grid>*/}
+// //         </Grid>
+//      {/*</Grid>*/}
+//
+//
+// //     <Grid item align ="center" xs={4}>
+// //         <Grid container direction="column" >
+//         {/*<Grid item xs = {12}>Task Showlist</Grid>*/}
+//             {/*{this.state.task_list.map(task => (*/}
+// //                 <p>{task['name']}</p>
+// //
+// //   ))}
+// //                {/*<Button color = "primary"*/}
+// //                        {/*variant="contained"*/}
+// //                        {/*onClick ={this.showModal()}*/}
+// //                        {/*// style={{ width: 80}}*/}
+// //                {/*>*/}
+// //                 {/*Add Task*/}
+// //             {/*</Button>*/}
+// //             <Grid item xs={12}>
+// //                 <Button
+// //                     color = "primary"
+// //                     variant="contained"
+// //                     onClick={this.showModal}>click here
+// //                 </Button>
+// //             <Modal visible={visible}></Modal></Grid>
+//    // {/*</Grid>*/}
+//   //  {/*</Grid>*/}
+//
+// //{/*</Grid>*/}
+    )
   }
 }
 
