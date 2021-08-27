@@ -111,6 +111,7 @@ export default class LoginPage extends Component{
                         style:{textAlign:"center"},
                     }}
                     onChange={this.handlePasswordChange}
+
                 />
                 <FormHelperText>
                     <div align = "center">Password</div>
@@ -119,7 +120,7 @@ export default class LoginPage extends Component{
         </Grid>
 
        <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained" onClick={this.handleLoginButtonPressed} style={{ width: 80}}>
+            <Button color = "primary" variant="contained" onClick={this.handleLoginButtonPressed}   style={{ width: 80}}>
                 Login
             </Button>
 

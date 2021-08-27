@@ -14,15 +14,17 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl/FormControl";
 import TextField from "@material-ui/core/TextField/TextField";
-import Modal from './Modal/addTask'
+// import Modal from './Modal/addTask'
+import TaskModal from './Modal/TaskModal'
 
-
+import { Modal } from '@material-ui/core';
 
 export default class Dashboard extends Component {
 
     constructor(props) {
         super(props);
-        this.showModal = this.showModal.bind(this);
+        // this.showModal = this.showModal.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
         this.increase = this.increase.bind(this);
         this.decrease = this.decrease.bind(this);
         this.state = {
@@ -40,7 +42,7 @@ export default class Dashboard extends Component {
         this.initialize();
     }
 
-    showModal() {
+    handleOpen() {
         this.setState({visible: true})
     }
 
@@ -103,12 +105,12 @@ export default class Dashboard extends Component {
         this.setState({record_list});
     }
 
-
     render() {
 
+  // getModalStyle is not a pure function, we roll the style only on the first render
+
+
         const {visible} = this.state;
-
-
         return (
             <Grid container direction="row"
                   alignItems="center"
@@ -141,6 +143,7 @@ export default class Dashboard extends Component {
                         <Grid container direction="row">
                             {this.state.record_list.map((record, index) => (
                                 <Grid item xs={12}>
+                                    {record['task_name']}:
                                     <LinearProgress algin="center"
                                                     variant="determinate" style={{color: "#0ec44e"}}
                                                     value={100 * (record["complete"] / record["repeat"])}
@@ -161,30 +164,49 @@ export default class Dashboard extends Component {
                     </Grid>
                 </Grid>
 
-                {/*<Grid item align="center" xs={4}>*/}
-                    {/*<Grid container direction="column">*/}
-                        {/*<Grid item xs={12}>Task Showlist</Grid>*/}
-                        {/*{this.state.task_list.map(task => (*/}
-                            {/*<p>{task['name']}</p>*/}
+                <Grid item align="center" xs={4}>
+                    <Grid container direction="column">
+                        <Grid item xs={12}>Task Showlist</Grid>
+                        {this.state.task_list.map(task => (
+                            <p>{task['name']}</p>
 
-                        {/*))}*/}
-                        {/*<Button color="primary"*/}
-                                {/*variant="contained"*/}
-                                {/*onClick={this.showModal()}*/}
-                                {/*style={{width: 80}}*/}
+                        ))}
+                    </Grid>
+                                        {/*<Button color="primary"*/}
+                    {/*variant="contained"*/}
+                    {/*onClick={this.showModal()}*/}
+                    {/*style={{width: 80}}*/}
                         {/*>*/}
                             {/*Add Task*/}
                         {/*</Button>*/}
-                        {/*<Grid item xs={12}>*/}
+                        <Grid item xs={12}>
+                             <TaskModal color = "primary" />
+{/*<Modal open={true}>*/}
+  {/*<div>*/}
+    {/*Hello*/}
+  {/*</div>*/}
+{/*</Modal>*/}
+
                             {/*<Button*/}
                                 {/*color="primary"*/}
                                 {/*variant="contained"*/}
                                 {/*onClick={this.showModal}>click here*/}
                             {/*</Button>*/}
-                            {/*<Modal visible={visible}></Modal></Grid>*/}
-                    {/*</Grid>*/}
-                {/*</Grid>*/}
+                            {/*<Modal visible={visible}></Modal>*/}
+      {/*<button type="button" onClick={handleOpen}>*/}
+        {/*Open Modal*/}
+      {/*</button>*/}
+      {/*<Modal*/}
+        {/*open={open}*/}
+        {/*onClose={handleClose}*/}
+        {/*aria-labelledby="simple-modal-title"*/}
+        {/*aria-describedby="simple-modal-description"*/}
+      {/*>*/}
+        {/*{body}*/}
+      {/*</Modal>*/}
+                        </Grid>
 
+                </Grid>
             </Grid>
         )
     }
