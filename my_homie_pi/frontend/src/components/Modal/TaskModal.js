@@ -4,6 +4,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import Grid from "@material-ui/core/Grid/Grid";
+import Typography from "@material-ui/core/Typography/Typography";
+import FormControl from "@material-ui/core/FormControl/FormControl";
+import TextField from "@material-ui/core/TextField/TextField";
+import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     modal: {
@@ -12,7 +18,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
     },
     paper: {
-        backgroundColor: "#EDED82",
+        backgroundColor: "#97E8FC",
         border: '2px solid #FFFFFF',
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
@@ -22,6 +28,8 @@ const useStyles = makeStyles(theme => ({
 export default function AnimatedModal() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
+
+    const taskname = ""
 
     const handleOpen = () => {
         setOpen(true);
@@ -49,11 +57,71 @@ export default function AnimatedModal() {
                 }}
             >
                 <Fade in={open}>
-                    <div className={classes.paper}>
-                        <h2>Animated React Modal</h2>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi accumsan odio enim.
-                        </p>
+                    {/*handleuse*/}
+        <div className={classes.paper}>
+        <Grid container spacing={1}   container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          // style={{ minHeight: '100vh' }}
+        >
+        <Grid item xs={12} align="center">
+          <Typography component="h6" variant="h6">
+            New Task
+          </Typography>
+        </Grid>
+
+
+        <Grid item xs={12} align="center">
+            <FormControl>
+                <TextField
+                    required={true}
+                    type="text"
+                    inputProps={{
+                        style:{textAlign:"center"},
+                    }}
+                    // onChange={this.handleUserNameChange}
+                />
+                <FormHelperText>
+                    <div align = "center">Task Name</div>
+                </FormHelperText>
+            </FormControl>
+
+        </Grid>
+
+       <Grid item xs={12} align="center">
+            <FormControl>
+                <TextField
+                    required={true}
+                    type="password"
+                    inputProps={{
+                        style:{textAlign:"center"},
+                    }}
+                    // onChange={this.handlePasswordChange}
+                />
+                <FormHelperText>
+                    <div align = "center">Daily Repeat</div>
+                </FormHelperText>
+            </FormControl>
+        </Grid>
+
+       <Grid item xs={12} align="center">
+            <FormControl>
+                <TextField
+                    required={true}
+                    type="password"
+                    inputProps={{
+                        style:{textAlign:"center"},
+                    }}
+                    // onChange={this.handlePasswordChange}
+                />
+                <FormHelperText>
+                    <div align = "center">Daily Repeat</div>
+                </FormHelperText>
+            </FormControl>
+        </Grid>
+    </Grid>
                     </div>
                 </Fade>
             </Modal>

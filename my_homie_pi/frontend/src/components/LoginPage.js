@@ -73,11 +73,11 @@ export default class LoginPage extends Component{
     render(){
         return(
         <Grid container spacing={1}   container
-  spacing={0}
-  direction="column"
-  alignItems="center"
-  justify="center"
-  style={{ minHeight: '100vh' }}>
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          style={{ minHeight: '100vh' }}>
         <Grid item xs={12} align="center">
           <Typography component="h3" variant="h3">
             Login
@@ -128,9 +128,7 @@ export default class LoginPage extends Component{
                 Register
             </Button>
         </Grid>
-
-        </Grid>
-
+    </Grid>
         )
     }
 }
