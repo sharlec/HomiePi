@@ -7,11 +7,9 @@ from django.contrib.auth.models import User
 
 def recordUpdate():
     tasks = task.objects.all()
-
     now = datetime.datetime.now()
     today_date  = now.strftime("%Y-%m-%d")
     print(today_date)
-
     today_week = int(time.strftime("%w"))
     print(today_week)
 

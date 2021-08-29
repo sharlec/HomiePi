@@ -11,7 +11,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 
-
 class Modal extends Component {
   constructor(props) {
     super(props);

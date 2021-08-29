@@ -39,7 +39,6 @@ class taskSerializer(serializers.ModelSerializer):
     class Meta:
         model = task
         fields = ('id','user_ID','repeat','name','week','start_date')
-
         def create(self, validated_data):
             # create user
             task = Task.objects.create_user(

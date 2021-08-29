@@ -194,7 +194,7 @@ export default class Dashboard extends Component {
 
                 <Grid item align="center" xs={4}>
                     <Grid container direction="column">
-                        <Grid item xs={12}>Task Showlist</Grid>
+                        <Grid item xs={12}><h3>Task Showlist</h3></Grid>
                         {this.state.task_list.map(task => (
                             <p>{task['name']}</p>
 

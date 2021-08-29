@@ -16,6 +16,7 @@ from rest_framework_simplejwt import authentication
 from django.core import serializers
 import json
 import datetime
+from .updateRecord import recordUpdate
 
 
 
@@ -70,7 +71,6 @@ class dashBoardView(APIView):
                 'gender': user.profile.gender,
                 'task_list': task_list,
                 'record_list' : record_list}
-
         return Response(data, status = status.HTTP_200_OK)
 
 class taskView(generics.ListAPIView):
@@ -79,12 +79,12 @@ class taskView(generics.ListAPIView):
     queryset = task.objects.all()
     serializer_class = taskSerializer
 
-    def post(self, request, format = None):
-        serializer = self.serializer_class(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request, format = None):
+    #     serializer = self.serializer_class(data = request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format = None):
         JWT_authenticator = authentication.JWTAuthentication()
@@ -97,13 +97,27 @@ class taskView(generics.ListAPIView):
         obj = list(queryset.values())
         print(obj)
         dict1['data'] = obj
-
         return Response(obj)
 
-
-        # return queryset
-
-
+    def post(self, request, format = None):
+        JWT_authenticator = authentication.JWTAuthentication()
+        response = JWT_authenticator.authenticate(request)
+        user, token = response
+        taskset  = task.objects.filter(name = request.data["name"])
+        if taskset.exists():
+            print("already exist")
+            return Response( status=status.HTTP_409_Conflict)
+        else:
+            print("new task created")
+            user_ID = user.id
+            name = request.data["name"]
+            repeat = request.data["repeat"]
+            week = request.data["week"]
+            print(request.data)
+            new_task = task(user_ID=user_ID,name=name, repeat = repeat, week = week)
+            new_task.save()
+            recordUpdate()
+            return Response(status=status.HTTP_201_CREATED)
 
 # class createTaskView(APIView):
 #     # permission_classes = [permissions.IsAuthenticated]

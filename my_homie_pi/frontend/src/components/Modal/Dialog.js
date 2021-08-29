@@ -5,13 +5,10 @@ import TextField from "@material-ui/core/TextField/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid/Grid";
-
 
 export default class Dialog extends Component {
     constructor(props){
         super(props);
-        this.closeModal = this.closeModal.bind(this);
         this.handleConfirmButtonPressed = this.handleConfirmButtonPressed.bind(this);
         this.handleTaskChange = this.handleTaskChange.bind(this);
         this.handleRepeatChange = this.handleRepeatChange.bind(this);
@@ -27,7 +24,6 @@ export default class Dialog extends Component {
                  {id: 0, name: 'sun'},
                 ],
             selected : [],
-            visible : false
         };
     }
 
@@ -37,20 +33,29 @@ export default class Dialog extends Component {
         method: "POST",
         headers: {
                 'Accept': 'application/json, text/plain',
-                'Content-Type': 'application/json;charset=UTF-8'
+                'Content-Type': 'application/json;charset=UTF-8',
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`,
             },
 
         body:JSON.stringify({
-            task_name   : this.state.name,
+            name   : this.state.task_name,
             repeat : this.state.repeat,
             week : this.state.selected.toString()
     }),
     };
     //发送信息
-    // fetch('/API/create-task',requestOptions).then((response)=>response.json()).then((data)=>console.log(data));
+    fetch('/API/task',requestOptions).then((response)=>{
+            if(response.status === 200){
+                console.log("SUCCESSS")
+                // return response.json();
+            }
+    }
+    )
+    // response.json()).then((data)=>console.log(data));
     // const { confirm } = this.props;
     // confirm && confirm();
     // this.setState({ visible: false })
+        window.location.reload()
     }
 
     handleTaskChange(e) {
@@ -66,8 +71,8 @@ export default class Dialog extends Component {
     }
 
     handleWeekChange(id){
-        let selected = this.state.selected
-          let find = selected.indexOf(id)
+        let selected = this.state.selected;
+          let find = selected.indexOf(id);
           if(find > -1) {
             selected.splice(find, 1)
           } else {
@@ -99,7 +104,7 @@ export default class Dialog extends Component {
             <FormControl>
                 <TextField
                     required={true}
-                    type="text"
+                    type="number"
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
@@ -109,27 +114,26 @@ export default class Dialog extends Component {
                     <div align = "center">How many times per day</div>
                 </FormHelperText>
             </FormControl>
-     <FormControl component="fieldset">
-      <FormGroup aria-label="position" row>
-             { JSON.stringify(this.state.selected) }
-              {this.state.week.map(item => {
-                  return (
-                        <label key={ item.id } position="bottom">
-                          <input type="checkbox"
-                          onChange={ () => this.handleWeekChange(item.id) }
-                          selected={ this.state.selected.includes(item.id) }
-                          ></input>
-                          <span>{ item.name }</span>
-                    </label>
-                  )
-                })
-              }
-      </FormGroup>
-        <FormHelperText>
-            <div align = "center">Weekly Schedule</div>
-        </FormHelperText>
-     </FormControl>
-
+        <FormControl component="fieldset">
+            <FormGroup aria-label="position" row>
+                 { JSON.stringify(this.state.selected) }
+                  {this.state.week.map(item => {
+                      return (
+                            <label key={ item.id } position="bottom">
+                              <input type="checkbox"
+                              onChange={ () => this.handleWeekChange(item.id) }
+                              selected={ this.state.selected.includes(item.id) }
+                              ></input>
+                              <span>{ item.name }</span>
+                        </label>
+                      )
+                    })
+                  }
+            </FormGroup>
+            <FormHelperText>
+                <div align = "center">Weekly Schedule</div>
+            </FormHelperText>
+        </FormControl>
 
         <Button color="primary"
             variant="contained"
