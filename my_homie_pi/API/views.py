@@ -76,7 +76,7 @@ class dashBoardView(APIView):
 class taskView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (authentication.JWTAuthentication,)
-    # queryset = task.objects.all()
+    queryset = task.objects.all()
     serializer_class = taskSerializer
 
     def post(self, request, format = None):

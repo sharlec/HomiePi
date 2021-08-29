@@ -10,6 +10,7 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import TextField from "@material-ui/core/TextField/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import {Link} from "react-router-dom";
+import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 
 const useStyles = makeStyles(theme => ({
     modal: {
@@ -29,7 +30,25 @@ export default function AnimatedModal() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
 
-    const taskname = ""
+    const taskname = "";
+    const week = [{id: 1, name: 'mon'},
+             {id: 2, name: 'tu'},
+             {id: 3, name: 'wed'},
+             {id: 4, name: 'th'},
+             {id: 5, name: 'fri'},
+             {id: 6, name: 'sat'},
+             {id: 7, name: 'sun'},];
+    const selected = [];
+    const handleWeekChange=(id)=> {
+        let selected =this.selected;
+          let find = selected.indexOf(id);
+          if(find > -1) {
+            selected.splice(find, 1)
+          } else {
+            selected.push(id)
+          }
+          this.setState({ selected })
+    }
 
     const handleOpen = () => {
         setOpen(true);
@@ -94,33 +113,42 @@ export default function AnimatedModal() {
             <FormControl>
                 <TextField
                     required={true}
-                    type="password"
+                    // type="text"
+                    type="number"
                     inputProps={{
                         style:{textAlign:"center"},
                     }}
-                    // onChange={this.handlePasswordChange}
+                    // onChange={this.handleUserNameChange}
                 />
                 <FormHelperText>
                     <div align = "center">Daily Repeat</div>
                 </FormHelperText>
             </FormControl>
+
         </Grid>
 
-       <Grid item xs={12} align="center">
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="password"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    // onChange={this.handlePasswordChange}
-                />
-                <FormHelperText>
-                    <div align = "center">Daily Repeat</div>
-                </FormHelperText>
-            </FormControl>
-        </Grid>
+       {/*<Grid item xs={12} align="center">*/}
+           {/*<FormControl component="fieldset">*/}
+               {/*<FormGroup aria-label="position" row>*/}
+                 {/*{ JSON.stringify(selected) }*/}
+                 {/*{week.map(item => {*/}
+                     {/*return (*/}
+                      {/*<label key={ item.id } position="bottom">*/}
+                      {/*<input type="checkbox"*/}
+                      {/*onChange={ () => handleWeekChange(item.id) }*/}
+                      {/*selected={ this.selected.includes(item.id) }*/}
+                      {/*></input>*/}
+                  {/*<span>{ item.name }</span>*/}
+                {/*</label>*/}
+              {/*)*/}
+            {/*})*/}
+          {/*}*/}
+           {/*</FormGroup>*/}
+                  {/*<FormHelperText>*/}
+        {/*<div align = "center">Weekly Schedule</div>*/}
+            {/*</FormHelperText>*/}
+            {/*</FormControl>*/}
+        {/*</Grid>*/}
     </Grid>
                     </div>
                 </Fade>

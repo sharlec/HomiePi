@@ -75,7 +75,6 @@ export default class RegisterPagePage extends Component{
             headers: {
                 'Accept': 'application/json, text/plain',
                 'Content-Type': 'application/json;charset=UTF-8',
-                'X-CSRFToken': Cookies.get('csrftoken'),
             },
             body:JSON.stringify({
                 // gender: this.state.gender,

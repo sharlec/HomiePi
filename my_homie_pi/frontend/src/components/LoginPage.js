@@ -12,8 +12,6 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
-
-
 export default class LoginPage extends Component{
     constructor(props){
         super(props);
@@ -21,7 +19,6 @@ export default class LoginPage extends Component{
             username   : null,
             password: null,
     };
-
         this.handleLoginButtonPressed = this.handleLoginButtonPressed.bind(this);
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -30,19 +27,22 @@ export default class LoginPage extends Component{
     handleUserNameChange(e) {
     this.setState({
       username: e.target.value,
-
     });
-    console.log(this.state)
   }
 
-  handlePasswordChange(e) {
+    handlePasswordChange(e) {
     this.setState({
       password: e.target.value,
     });
         console.log(this.state)
-  }
+    }
 
-  // curl -H "Content-Type: application/json" -X POST -d '{"username":"charles","password":"123"}' http://127.0.0.1:8000/API/login
+    _handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      // console.log('do validate');
+        this.handleLoginButtonPressed()
+    }
+    };
 
     handleLoginButtonPressed(){
         console.log(this.state);
@@ -78,12 +78,12 @@ export default class LoginPage extends Component{
           alignItems="center"
           justify="center"
           style={{ minHeight: '100vh' }}>
+
         <Grid item xs={12} align="center">
-          <Typography component="h3" variant="h3">
+          <Typography component="h4" variant="h4">
             Login
           </Typography>
         </Grid>
-
 
         <Grid item xs={12} align="center">
             <FormControl>
@@ -94,12 +94,12 @@ export default class LoginPage extends Component{
                         style:{textAlign:"center"},
                     }}
                     onChange={this.handleUserNameChange}
+                    onKeyDown={this._handleKeyDown}
                 />
                 <FormHelperText>
                     <div align = "center">User Name</div>
                 </FormHelperText>
             </FormControl>
-
         </Grid>
 
        <Grid item xs={12} align="center">
@@ -111,7 +111,7 @@ export default class LoginPage extends Component{
                         style:{textAlign:"center"},
                     }}
                     onChange={this.handlePasswordChange}
-
+                    onKeyDown={this._handleKeyDown}
                 />
                 <FormHelperText>
                     <div align = "center">Password</div>

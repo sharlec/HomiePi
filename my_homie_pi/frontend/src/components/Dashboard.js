@@ -15,8 +15,9 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import TextField from "@material-ui/core/TextField/TextField";
 // import Modal from './Modal/addTask'
 import TaskModal from './Modal/TaskModal'
-
 import { Modal } from '@material-ui/core';
+import Testmodal from './Modal/Test';
+import Dialog from './Modal/Dialog';
 
 export default class Dashboard extends Component {
 
@@ -26,6 +27,8 @@ export default class Dashboard extends Component {
         this.handleOpen = this.handleOpen.bind(this);
         this.increase = this.increase.bind(this);
         this.decrease = this.decrease.bind(this);
+        this.tan=this.tan.bind(this);
+        this.hide=this.hide.bind(this);
         this.state = {
             user_ID: null,
             gender: "M",
@@ -35,11 +38,41 @@ export default class Dashboard extends Component {
             visible: false,
             task_list: [],
             record_list: [],
+            isShow:false,
+            isShow2:false,
+            display: "none"
         };
-
         this.user_ID = this.props.match.params.user_ID;
         this.initialize();
     }
+
+
+    tan(){
+        console.log(this);
+        this.setState({display:'block'})
+    }
+
+    hide(){
+        this.setState({display:'none'})
+    }
+
+    toggle=()=>{
+    this.setState({
+      isShow:!this.state.isShow
+    })
+    };
+
+    handleOk=()=>{
+    this.setState({
+      isShow:false
+    })
+    };
+
+    handleCancel=()=>{
+    this.setState({
+      isShow:false
+    })
+    };
 
     handleOpen() {
         this.setState({visible: true})
@@ -105,10 +138,6 @@ export default class Dashboard extends Component {
     }
 
     render() {
-
-  // getModalStyle is not a pure function, we roll the style only on the first render
-
-
         const {visible} = this.state;
         return (
             <Grid container direction="row"
@@ -171,40 +200,17 @@ export default class Dashboard extends Component {
 
                         ))}
                     </Grid>
-                                        {/*<Button color="primary"*/}
-                    {/*variant="contained"*/}
-                    {/*onClick={this.showModal()}*/}
-                    {/*style={{width: 80}}*/}
-                        {/*>*/}
-                            {/*Add Task*/}
-                        {/*</Button>*/}
-                        <Grid item xs={12}>
-                             <TaskModal color = "primary" />
-{/*<Modal open={true}>*/}
-  {/*<div>*/}
-    {/*Hello*/}
-  {/*</div>*/}
-{/*</Modal>*/}
 
-                            {/*<Button*/}
-                                {/*color="primary"*/}
-                                {/*variant="contained"*/}
-                                {/*onClick={this.showModal}>click here*/}
-                            {/*</Button>*/}
-                            {/*<Modal visible={visible}></Modal>*/}
-      {/*<button type="button" onClick={handleOpen}>*/}
-        {/*Open Modal*/}
-      {/*</button>*/}
-      {/*<Modal*/}
-        {/*open={open}*/}
-        {/*onClose={handleClose}*/}
-        {/*aria-labelledby="simple-modal-title"*/}
-        {/*aria-describedby="simple-modal-description"*/}
-      {/*>*/}
-        {/*{body}*/}
-      {/*</Modal>*/}
-                        </Grid>
+                <Grid item xs={12}>
+                <Dialog display={this.state.display} hide={this.hide} />
+                <Button color="primary"
+                    variant="contained"
+                    onClick={this.tan}
+                >
+                    New Task
+                </Button>
 
+                    </Grid>
                 </Grid>
             </Grid>
         )

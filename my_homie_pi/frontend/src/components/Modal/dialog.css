@@ -1,0 +1,25 @@
+.mask{
+    width: 100%;
+    height: 100%;
+    /*position: fixed;*/
+    left: 0;
+    right: 0;
+    left: 50%;
+    top: 50%;
+    background-color: #402fff;
+    opacity: 0.9;
+    color: #000000;
+}
+
+
+.content{
+    position: fixed;
+    height: 300px;
+    border-color: black;
+    border-style: double;
+    width: 300px;
+    left: 50%;
+    top: 50%;
+    background-color: #c0cdec;
+    transform: translate(-50%,-50%);
+}
