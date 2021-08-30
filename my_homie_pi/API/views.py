@@ -79,13 +79,6 @@ class taskView(generics.ListAPIView):
     queryset = task.objects.all()
     serializer_class = taskSerializer
 
-    # def post(self, request, format = None):
-    #     serializer = self.serializer_class(data = request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def get(self, request, format = None):
         JWT_authenticator = authentication.JWTAuthentication()
         response = JWT_authenticator.authenticate(request)

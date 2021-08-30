@@ -108,7 +108,6 @@ export default class Dashboard extends Component {
                 } else console.log()
             }
         )
-
     }
 
     increase(index) {

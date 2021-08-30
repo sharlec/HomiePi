@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
 import FormGroup from "@material-ui/core/FormGroup/FormGroup";
 import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 
 export default class Dialog extends Component {
     constructor(props){
@@ -120,10 +121,11 @@ export default class Dialog extends Component {
                   {this.state.week.map(item => {
                       return (
                             <label key={ item.id } position="bottom">
-                              <input type="checkbox"
+                        <Checkbox
+                          color="primary"
                               onChange={ () => this.handleWeekChange(item.id) }
                               selected={ this.state.selected.includes(item.id) }
-                              ></input>
+                            ></Checkbox>
                               <span>{ item.name }</span>
                         </label>
                       )

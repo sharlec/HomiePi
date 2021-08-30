@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid/Grid";
 import TextField from "@material-ui/core/TextField/TextField";
 import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
+import Checkbox from '@material-ui/core/Checkbox';
 import FormLabel from '@material-ui/core/FormLabel';
 
 class Modal extends Component {
@@ -140,10 +141,11 @@ class Modal extends Component {
               {this.state.week.map(item => {
                   return (
                         <label key={ item.id } position="bottom">
-                          <input type="checkbox"
+                          <Checkbox
+                          color="primary"
                           onChange={ () => this.handleWeekChange(item.id) }
                           selected={ this.state.selected.includes(item.id) }
-                          ></input>
+                          ></Checkbox>
                           <span>{ item.name }</span>
                     </label>
                   )

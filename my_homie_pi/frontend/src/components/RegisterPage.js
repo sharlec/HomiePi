@@ -9,7 +9,11 @@ import { Link } from "react-router-dom";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Cookies from 'js-cookie';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import Alert from '@material-ui/lab/Alert';
+
+
 
 
 export default class RegisterPagePage extends Component{
@@ -22,7 +26,10 @@ export default class RegisterPagePage extends Component{
             last_name   : null,
             password   : null,
             age    : 0,
+            show : false,
+            error_msg : null,
     };
+        open = false
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
@@ -30,7 +37,11 @@ export default class RegisterPagePage extends Component{
         this.handleLastNameChange = this.handleLastNameChange.bind(this);
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleClose =this.handleClose.bind(this);
+
     }
+
+
 
     handleUserNameChange(e) {
     this.setState({
@@ -68,6 +79,12 @@ export default class RegisterPagePage extends Component{
     });
   }
 
+      handleClose(e) {
+    // this.setState({
+    //   age: e.target.value,
+    // });
+  }
+
     handleRegisterButtonPressed(){
         console.log(this.state);
         const requestOptions={
@@ -77,23 +94,36 @@ export default class RegisterPagePage extends Component{
                 'Content-Type': 'application/json;charset=UTF-8',
             },
             body:JSON.stringify({
-                // gender: this.state.gender,
                 username:   this.state.username,
                 password:   this.state.password,
                 first_name: this.state.first_name,
                 last_name: this.state.last_name,
-                // age:    this.state.age,
+
                 profile: {age: this.state.age, gender: this.state.gender}
         }),
         };
-        fetch('/API/user',requestOptions).then((response)=>response.json()).then((data)=>console.log(data))
+        fetch('/API/user',requestOptions).then((response)=>{
+            if (response.status < 300){
+                console.log(this.open);
+                this.open = true;
+                // Popup.alert('I am alert, nice to meet you');
+                console.log(this.open);}
+            else
+                this.state.error_msg = "something wrong"
+        })
+            // response.json()).then((data)=>console.log(data))
         // if success, then redirect to login or dashboard
         // give success information
     }
 
     render(){
         return(
-        <Grid container spacing={1}>
+        <Grid container spacing={1}
+          direction="column"
+          alignItems="center"
+          justify="center"
+          style={{ minHeight: '100vh' }}
+        >
         <Grid item xs={12} align="center">
           <Typography component="h4" variant="h4">
             Create a New Account
@@ -216,6 +246,16 @@ export default class RegisterPagePage extends Component{
                 Back
             </Button>
         </Grid>
+
+        <Snackbar open={this.open}  onClose={this.handleClose}>
+            {/*<Alert onClose={this.handleClose} severity="success">*/}
+            {/*This is a success message!*/}
+            {/*</Alert>*/}
+         <Alert severity="success">
+             Registration Success!
+         </Alert>
+        </Snackbar>
+
         </Grid>
         )
     }
