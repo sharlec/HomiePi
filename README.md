@@ -20,8 +20,7 @@ English | [简体中文](./README.zh-CN.md)
 
 ## Overview
 
-HomiePi turns a Raspberry Pi (or any home server) plus a screen into a family task board. Add users and
-tasks from any phone on the same Wi-Fi via QR codes, then tap to complete tasks on the kiosk.
+HomiePi is a home kiosk for daily task reminders. Run it on a Raspberry Pi with a screen, add users and tasks from any phone on the same Wi-Fi, then tap to check in—no typing or passwords.
 
 ## Highlights
 
