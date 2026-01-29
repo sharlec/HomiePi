@@ -27,6 +27,8 @@ export default class Dashboard extends Component {
         this.handleOpen = this.handleOpen.bind(this);
         this.increase = this.increase.bind(this);
         this.decrease = this.decrease.bind(this);
+        this.persistRecord = this.persistRecord.bind(this);
+        this.handleLogoutButtonPressed = this.handleLogoutButtonPressed.bind(this);
         this.tan=this.tan.bind(this);
         this.hide=this.hide.bind(this);
         this.state = {
@@ -78,6 +80,12 @@ export default class Dashboard extends Component {
         this.setState({visible: true})
     }
 
+    handleLogoutButtonPressed() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        this.props.history.push("/");
+    }
+
     //Authorization: `Bearer ${user.token}`
     initialize() {
         const requestOptions = {
@@ -110,30 +118,57 @@ export default class Dashboard extends Component {
         )
     }
 
+    persistRecord(recordId, complete) {
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8',
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+            },
+            body: JSON.stringify({
+                record_id: recordId,
+                complete: complete,
+            }),
+        };
+
+        fetch('/API/record', requestOptions).then((response) => {
+            if (!response.ok) {
+                console.log("Failed to update record");
+            }
+        });
+    }
+
     increase(index) {
-        let record_list = this.state.record_list;
-        let complete = record_list[index]["complete"] + 1;
-        let repeat = record_list[index]["repeat"];
+        const record_list = [...this.state.record_list];
+        const entry = { ...record_list[index] };
+        let complete = entry["complete"] + 1;
+        let repeat = entry["repeat"];
 
         if (complete > repeat) {
             complete = repeat;
         }
-        record_list[index]["complete"] = complete;
+        entry["complete"] = complete;
+        record_list[index] = entry;
 
         this.setState({record_list});
+        this.persistRecord(entry["id"], complete);
     };
 
     decrease(index) {
-        let record_list = this.state.record_list;
-        let complete = record_list[index]["complete"] - 1;
+        const record_list = [...this.state.record_list];
+        const entry = { ...record_list[index] };
+        let complete = entry["complete"] - 1;
 
         if (complete < 0) {
             complete = 0;
         }
 
-        record_list[index]["complete"] = complete;
+        entry["complete"] = complete;
+        record_list[index] = entry;
 
         this.setState({record_list});
+        this.persistRecord(entry["id"], complete);
     }
 
     render() {
@@ -173,7 +208,7 @@ export default class Dashboard extends Component {
                                     {record['task_name']}:
                                     <LinearProgress algin="center"
                                                     variant="determinate" style={{color: "#0ec44e"}}
-                                                    value={100 * (record["complete"] / record["repeat"])}
+                                                    value={record["repeat"] ? 100 * (record["complete"] / record["repeat"]) : 0}
                                                     label={record["task_name"]}
                                     />
                                     <Grid item xs={5}>
@@ -215,5 +250,4 @@ export default class Dashboard extends Component {
         )
     }
 }
-
 

@@ -27,7 +27,7 @@ class task(models.Model):
     user_ID = models.IntegerField(null=False, default=0)
     name = models.CharField(max_length=20, unique=True,null=False, default=None)
     week = models.CharField(max_length=7, unique=False, null=False, default= "0000000")
-    repeat = models.IntegerField(max_length=7, unique=False, null=False, default="1")
+    repeat = models.IntegerField(null=False, default=1)
     start_date = models.DateTimeField(auto_now_add=True)
 
 class record(models.Model):

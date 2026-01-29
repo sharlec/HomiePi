@@ -43,11 +43,52 @@ class TestView(generics.ListAPIView):
         # print(self.authentication_classes.get_user().username)
         return Response('ok')
 
-class recordView(generics.ListAPIView):
-    permission_classes = (permissions.AllowAny,)
-    queryset = record.objects.all()
-    serializer_class = recordSerializer
-    # serializer = self.serializer_class(data=request.data)
+class logoutView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.JWTAuthentication,)
+
+    def post(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class recordView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.JWTAuthentication,)
+
+    def get(self, request, *args, **kwargs):
+        queryset = record.objects.filter(user_ID=request.user.id)
+        serializer = recordSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        record_id = request.data.get("record_id")
+        complete = request.data.get("complete")
+        if record_id is None or complete is None:
+            return Response(
+                {"detail": "record_id and complete are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            entry = record.objects.get(id=record_id, user_ID=request.user.id)
+        except record.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            complete = int(complete)
+        except (TypeError, ValueError):
+            return Response(
+                {"detail": "complete must be an integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if complete < 0:
+            complete = 0
+        if complete > entry.repeat:
+            complete = entry.repeat
+
+        entry.complete = complete
+        entry.save(update_fields=['complete'])
+        return Response(recordSerializer(entry).data, status=status.HTTP_200_OK)
 
 class dashBoardView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -74,38 +115,33 @@ class dashBoardView(APIView):
         return Response(data, status = status.HTTP_200_OK)
 
 class taskView(generics.ListAPIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.JWTAuthentication,)
     queryset = task.objects.all()
     serializer_class = taskSerializer
 
     def get(self, request, format = None):
-        JWT_authenticator = authentication.JWTAuthentication()
-        response = JWT_authenticator.authenticate(request)
-        # user, token = response
-        # print(user.ID)
-        queryset  = task.objects.filter(user_ID= 1)
-        # data = serializers.serialize('json', list(queryset))
-        dict1 = {}
+        queryset = task.objects.filter(user_ID=request.user.id)
         obj = list(queryset.values())
-        print(obj)
-        dict1['data'] = obj
-        return Response(obj)
+        return Response(obj, status=status.HTTP_200_OK)
 
     def post(self, request, format = None):
-        JWT_authenticator = authentication.JWTAuthentication()
-        response = JWT_authenticator.authenticate(request)
-        user, token = response
-        taskset  = task.objects.filter(name = request.data["name"])
+        name = request.data.get("name")
+        repeat = request.data.get("repeat")
+        week = request.data.get("week")
+        if not name or repeat is None or week is None:
+            return Response(
+                {"detail": "name, repeat, and week are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        taskset  = task.objects.filter(name=name, user_ID=request.user.id)
         if taskset.exists():
             print("already exist")
             return Response( status=status.HTTP_409_Conflict)
         else:
             print("new task created")
-            user_ID = user.id
-            name = request.data["name"]
-            repeat = request.data["repeat"]
-            week = request.data["week"]
+            user_ID = request.user.id
             print(request.data)
             new_task = task(user_ID=user_ID,name=name, repeat = repeat, week = week)
             new_task.save()

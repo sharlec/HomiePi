@@ -29,7 +29,6 @@ export default class RegisterPagePage extends Component{
             show : false,
             error_msg : null,
     };
-        open = false
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
@@ -80,9 +79,7 @@ export default class RegisterPagePage extends Component{
   }
 
       handleClose(e) {
-    // this.setState({
-    //   age: e.target.value,
-    // });
+        this.setState({ show: false });
   }
 
     handleRegisterButtonPressed(){
@@ -104,12 +101,10 @@ export default class RegisterPagePage extends Component{
         };
         fetch('/API/user',requestOptions).then((response)=>{
             if (response.status < 300){
-                console.log(this.open);
-                this.open = true;
-                // Popup.alert('I am alert, nice to meet you');
-                console.log(this.open);}
+                this.setState({ show: true, error_msg: null });
+            }
             else
-                this.state.error_msg = "something wrong"
+                this.setState({ error_msg: "something wrong" })
         })
             // response.json()).then((data)=>console.log(data))
         // if success, then redirect to login or dashboard
@@ -247,7 +242,7 @@ export default class RegisterPagePage extends Component{
             </Button>
         </Grid>
 
-        <Snackbar open={this.open}  onClose={this.handleClose}>
+        <Snackbar open={this.state.show} onClose={this.handleClose}>
             {/*<Alert onClose={this.handleClose} severity="success">*/}
             {/*This is a success message!*/}
             {/*</Alert>*/}

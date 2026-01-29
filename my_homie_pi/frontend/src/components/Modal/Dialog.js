@@ -46,17 +46,16 @@ export default class Dialog extends Component {
     };
     //发送信息
     fetch('/API/task',requestOptions).then((response)=>{
-            if(response.status === 200){
-                console.log("SUCCESSS")
-                // return response.json();
+            if(response.status === 201){
+                window.location.reload()
+            } else if (response.status === 409) {
+                console.log("Task already exists")
             }
-    }
-    )
+    })
     // response.json()).then((data)=>console.log(data));
     // const { confirm } = this.props;
     // confirm && confirm();
     // this.setState({ visible: false })
-        window.location.reload()
     }
 
     handleTaskChange(e) {
@@ -157,4 +156,3 @@ export default class Dialog extends Component {
         );
     }
 }
-
