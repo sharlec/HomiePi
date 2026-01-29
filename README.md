@@ -59,7 +59,7 @@ python manage.py runserver 0.0.0.0:8000
 
 ### 2) Frontend build (only if you change frontend code)
 ```
-cd backend/frontend
+cd frontend
 npm install
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
@@ -94,8 +94,9 @@ http://<pi-ip>:8000/
 
 - `backend/` Django project root (contains `manage.py`)
 - `backend/API/` backend models and views
-- `backend/frontend/` React source + build tooling
-- `backend/frontend/static/frontend/main.js` compiled frontend bundle
+- `backend/web/` Django app that serves the kiosk UI
+- `frontend/` React source + build tooling
+- `backend/web/static/web/main.js` compiled frontend bundle
 
 ## Roadmap
 

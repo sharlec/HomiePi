@@ -59,7 +59,7 @@ python manage.py runserver 0.0.0.0:8000
 
 ### 2) 前端构建（仅在修改前端代码后需要）
 ```
-cd backend/frontend
+cd frontend
 npm install
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
@@ -94,8 +94,9 @@ http://<pi-ip>:8000/
 
 - `backend/` Django 项目根目录（包含 `manage.py`）
 - `backend/API/` 后端模型与视图
-- `backend/frontend/` React 源码与构建工具
-- `backend/frontend/static/frontend/main.js` 编译后的前端包
+- `backend/web/` Django 应用（用于提供看板页面）
+- `frontend/` React 源码与构建工具
+- `backend/web/static/web/main.js` 编译后的前端包
 
 ## 计划
 

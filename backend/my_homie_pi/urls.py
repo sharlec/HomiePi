@@ -24,5 +24,5 @@ urlpatterns = [
     path('add_new_user', views.add_user_qr_page),
     path('m/add-task', views.mobile_add_task),
     path('m/register', views.mobile_register),
-    path('', include('frontend.urls'))
+    path('', include('web.urls'))
 ]

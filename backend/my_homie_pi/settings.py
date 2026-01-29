@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'API',
-    'frontend',
+    'web',
 
 ]
 CRONJOBS = [
@@ -170,7 +170,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = 'frontend/dashboard'
+LOGIN_REDIRECT_URL = '/dashboard'
 
 # Keep legacy AutoField to avoid implicit BigAutoField migrations on upgrade.
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
