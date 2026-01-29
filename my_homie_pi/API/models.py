@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 # Create your models here.
 # class user(models.Model):
 #
@@ -25,10 +26,13 @@ class UserProfile(models.Model):
 
 class task(models.Model):
     user_ID = models.IntegerField(null=False, default=0)
-    name = models.CharField(max_length=20, unique=True,null=False, default=None)
+    name = models.CharField(max_length=20, unique=False, null=False, default=None)
     week = models.CharField(max_length=7, unique=False, null=False, default= "0000000")
     repeat = models.IntegerField(null=False, default=1)
     start_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user_ID', 'name')
 
 class record(models.Model):
     user_ID = models.IntegerField(null=False)
@@ -40,6 +44,17 @@ class record(models.Model):
 
     class Meta:
         unique_together = ('user_ID', 'task_ID', 'date')
+
+class AddTaskToken(models.Model):
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    def is_valid(self):
+        return (not self.used) and timezone.now() <= self.expires_at
 
 # class record(models.Model):
 #     user_ID = models.IntegerField(null=False, default=0)

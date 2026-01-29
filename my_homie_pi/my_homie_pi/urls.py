@@ -20,5 +20,7 @@ from API import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('API/',include('API.urls')),
+    path('add_new_task', views.add_task_qr_page),
+    path('m/add-task', views.mobile_add_task),
     path('', include('frontend.urls'))
 ]

@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Space+Grotesk:wght@400;600&display=swap");
+
+.kiosk-root {
+  min-height: 100vh;
+  padding: 28px 36px;
+  background: radial-gradient(circle at top left, #fef9c3 0%, #e0f2fe 35%, #f8fafc 100%);
+  font-family: "Space Grotesk", sans-serif;
+  color: #0f172a;
+}
+
+.kiosk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.kiosk-header h1 {
+  font-family: "Fraunces", serif;
+  font-size: 30px;
+  margin: 4px 0 0;
+}
+
+.kiosk-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.kiosk-clock {
+  background: #0f172a;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.kiosk-users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.user-pill {
+  border: none;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(148, 163, 184, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.user-pill.active {
+  background: #0f172a;
+  color: #fff;
+}
+
+.user-pill.active .pill-avatar {
+  background: #f97316;
+  color: #fff;
+}
+
+.pill-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #0f172a;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+.kiosk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.column-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.task-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kiosk-task {
+  border: none;
+  border-radius: 18px;
+  padding: 16px 18px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 16px 30px rgba(148, 163, 184, 0.25);
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.kiosk-task:hover {
+  transform: translateY(-2px);
+}
+
+.kiosk-task.done {
+  background: #f0fdf4;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.task-title {
+  font-weight: 600;
+}
+
+.task-sub {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.task-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+}
+
+.kiosk-task.done .task-check {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.task-empty,
+.kiosk-note {
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #64748b;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .kiosk-grid {
+    grid-template-columns: 1fr;
+  }
+}

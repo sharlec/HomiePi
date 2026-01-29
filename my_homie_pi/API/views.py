@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import generics, status, permissions
 from .serializers import UserSerializer,CreateUserSerializer, taskSerializer, CreateTaskSerializer, recordSerializer
 from .models import UserProfile, task, record
@@ -17,11 +17,187 @@ from django.core import serializers
 import json
 import datetime
 from .updateRecord import recordUpdate
+from django.utils import timezone
+import secrets
+from .models import AddTaskToken
 
 
 
 def index(request):
     return render(request,"index.html")
+
+def ensure_default_user():
+    if not User.objects.exists():
+        user = User.objects.create(username="charles")
+        user.set_unusable_password()
+        user.save()
+        UserProfile.objects.create(user=user, gender="M", age=18)
+
+def add_task_qr_page(request):
+    ensure_default_user()
+    user_id = request.GET.get("user_id")
+    user = None
+    if user_id:
+        user = User.objects.filter(id=user_id).first()
+
+    token_value = secrets.token_urlsafe(16)
+    expires_at = timezone.now() + datetime.timedelta(minutes=10)
+    AddTaskToken.objects.create(user=user, token=token_value, expires_at=expires_at)
+
+    mobile_url = request.build_absolute_uri(f"/m/add-task?token={token_value}")
+
+    try:
+        import qrcode
+        import qrcode.image.svg
+        from io import BytesIO
+        img = qrcode.make(mobile_url, image_factory=qrcode.image.svg.SvgImage)
+        buffer = BytesIO()
+        img.save(buffer)
+        qr_svg = buffer.getvalue().decode()
+    except Exception:
+        qr_svg = None
+
+    return render(request, "api/add_task_qr.html", {
+        "mobile_url": mobile_url,
+        "expires_at": expires_at,
+        "qr_svg": qr_svg,
+    })
+
+def mobile_add_task(request):
+    ensure_default_user()
+    token_value = request.GET.get("token") or request.POST.get("token")
+    if not token_value:
+        return render(request, "api/mobile_add_task.html", {"error": "Missing token."})
+
+    token_obj = AddTaskToken.objects.filter(token=token_value).first()
+    if not token_obj or not token_obj.is_valid():
+        return render(request, "api/mobile_add_task.html", {"error": "Token expired or invalid."})
+
+    users = list(User.objects.all().order_by("id"))
+    palette = ["#f97316", "#3b82f6", "#10b981", "#f43f5e", "#a855f7", "#0ea5e9"]
+    user_cards = []
+    for idx, user in enumerate(users):
+        initials = user.username[:2].upper()
+        user_cards.append({
+            "id": user.id,
+            "username": user.username,
+            "initials": initials or "U",
+            "color": palette[idx % len(palette)],
+        })
+
+    if request.method == "POST":
+        name = (request.POST.get("name") or "").strip()
+        repeat = request.POST.get("repeat") or "1"
+        week_days = request.POST.getlist("week")
+        user_id = token_obj.user.id if token_obj.user else request.POST.get("user_id")
+
+        if not user_id:
+            return render(request, "api/mobile_add_task.html", {
+                "error": "Please select a user.",
+                "token": token_value,
+                "users": user_cards,
+                "token_user": token_obj.user,
+            })
+
+        if not name:
+            return render(request, "api/mobile_add_task.html", {
+                "error": "Task name is required.",
+                "token": token_value,
+                "users": user_cards,
+                "token_user": token_obj.user,
+            })
+
+        try:
+            repeat = int(repeat)
+            if repeat < 1:
+                repeat = 1
+        except ValueError:
+            repeat = 1
+
+        week = "".join(sorted(set(week_days))) if week_days else "0123456"
+
+        if task.objects.filter(user_ID=int(user_id), name=name).exists():
+            return render(request, "api/mobile_add_task.html", {
+                "error": "Task already exists for this user.",
+                "token": token_value,
+                "users": user_cards,
+                "token_user": token_obj.user,
+            })
+
+        new_task = task(user_ID=int(user_id), name=name, repeat=repeat, week=week)
+        new_task.save()
+        recordUpdate()
+        token_obj.used = True
+        token_obj.used_at = timezone.now()
+        token_obj.save(update_fields=["used", "used_at"])
+
+        return render(request, "api/mobile_add_task.html", {"success": True})
+
+    return render(request, "api/mobile_add_task.html", {
+        "token": token_value,
+        "users": user_cards,
+        "token_user": token_obj.user,
+    })
+
+def kiosk_user_list(request):
+    ensure_default_user()
+    users = User.objects.all().order_by("id")
+    data = [{"id": u.id, "username": u.username} for u in users]
+    return Response(data, status=status.HTTP_200_OK)
+
+def kiosk_dashboard(request):
+    ensure_default_user()
+    user_id = request.GET.get("user_id")
+    if not user_id:
+        return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+    user = User.objects.filter(id=user_id).first()
+    if not user:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    taskset = task.objects.filter(user_ID=user.id)
+    task_list = list(taskset.values())
+
+    now = datetime.datetime.now()
+    today_date = now.strftime("%Y-%m-%d")
+    recordset = record.objects.filter(user_ID=user.id, date=today_date)
+    record_list = list(recordset.values())
+
+    data = {
+        "user_ID": user.id,
+        "username": user.username,
+        "task_list": task_list,
+        "record_list": record_list,
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+def kiosk_record_update(request):
+    record_id = request.data.get("record_id")
+    user_id = request.data.get("user_id")
+    complete = request.data.get("complete")
+
+    if not record_id or not user_id or complete is None:
+        return Response(
+            {"detail": "record_id, user_id, and complete are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    entry = record.objects.filter(id=record_id, user_ID=user_id).first()
+    if not entry:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        complete = int(complete)
+    except (TypeError, ValueError):
+        return Response({"detail": "complete must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if complete < 0:
+        complete = 0
+    if complete > entry.repeat:
+        complete = entry.repeat
+
+    entry.complete = complete
+    entry.save(update_fields=["complete"])
+    return Response(recordSerializer(entry).data, status=status.HTTP_200_OK)
 
 class userView(generics.ListAPIView):
     queryset = User.objects.all()

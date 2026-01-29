@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Dialog from './Modal/Dialog';
 import "./Dashboard.css";
 
 export default class Dashboard extends Component {
@@ -7,12 +6,10 @@ export default class Dashboard extends Component {
     constructor(props) {
         super(props);
         // this.showModal = this.showModal.bind(this);
-        this.handleOpen = this.handleOpen.bind(this);
         this.toggleComplete = this.toggleComplete.bind(this);
         this.persistRecord = this.persistRecord.bind(this);
         this.handleLogoutButtonPressed = this.handleLogoutButtonPressed.bind(this);
-        this.tan=this.tan.bind(this);
-        this.hide=this.hide.bind(this);
+        this.openQrPage = this.openQrPage.bind(this);
         this.state = {
             user_ID: null,
             gender: "M",
@@ -23,21 +20,10 @@ export default class Dashboard extends Component {
             task_list: [],
             record_list: [],
             isShow:false,
-            isShow2:false,
-            display: "none"
+            isShow2:false
         };
         this.user_ID = this.props.match.params.user_ID;
         this.initialize();
-    }
-
-
-    tan(){
-        console.log(this);
-        this.setState({display:'block'})
-    }
-
-    hide(){
-        this.setState({display:'none'})
     }
 
     toggle=()=>{
@@ -58,8 +44,8 @@ export default class Dashboard extends Component {
     })
     };
 
-    handleOpen() {
-        this.setState({visible: true})
+    openQrPage() {
+        window.location.href = "/add_new_task";
     }
 
     handleLogoutButtonPressed() {
@@ -151,7 +137,6 @@ export default class Dashboard extends Component {
         const initials = this.state.username ? this.state.username.slice(0, 2).toUpperCase() : "HP";
         return (
             <div className="dashboard-root">
-                <Dialog display={this.state.display} hide={this.hide} />
                 <aside className="dashboard-sidebar">
                     <div className="brand">
                         <span className="brand-dot" />
@@ -165,8 +150,8 @@ export default class Dashboard extends Component {
                         </div>
                     </div>
                     <div className="menu">
-                        <button className="menu-btn primary" onClick={this.tan}>
-                            Add Task
+                        <button className="menu-btn primary" onClick={this.openQrPage}>
+                            Add Task (QR)
                         </button>
                         <button className="menu-btn ghost" onClick={this.handleLogoutButtonPressed}>
                             Logout

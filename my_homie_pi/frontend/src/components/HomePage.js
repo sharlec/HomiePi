@@ -3,6 +3,7 @@ import Dashboard from "./Dashboard";
 import TaskPage from "./TaskPage";
 import RegisterPage from "./RegisterPage"
 import LoginPage from "./LoginPage"
+import KioskPage from "./KioskPage"
 import { BrowserRouter as Router, Switch, Route, Link, Redirect} from "react-router-dom";
 
 export default class HomePage extends Component{
@@ -17,6 +18,7 @@ export default class HomePage extends Component{
 
                 <Route path='/profile/:user_name' component={Dashboard} />
                 <Route path='/dashboard' component={Dashboard} />
+                <Route path='/kiosk' component={KioskPage} />
                 <Route path='/task' component={TaskPage} />
                 <Route path='/register' component={RegisterPage} />
                 <Route path='/' component={LoginPage} />

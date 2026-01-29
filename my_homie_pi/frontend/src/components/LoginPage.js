@@ -1,18 +1,6 @@
 import React, { Component } from "react";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
 import { Link } from "react-router-dom";
-import Cookies from 'js-cookie';
-import cookie from "react-cookie";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
+import "./LoginPage.css";
 
 export default class LoginPage extends Component{
     constructor(props){
@@ -97,68 +85,63 @@ export default class LoginPage extends Component{
 
     render(){
         return(
-        <Grid container spacing={1}   container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justify="center"
-          style={{ minHeight: '100vh' }}>
+        <div className="login-root">
+            <div className="login-card">
+                <div className="login-left">
+                    <div className="login-brand">
+                        <span className="login-dot" />
+                        HomiePi
+                    </div>
+                    <h1>Welcome back</h1>
+                    <p>
+                        A focused space for your daily habits. Keep your streaks alive and
+                        close tasks with one tap.
+                    </p>
+                    <div className="login-quote">
+                        “Small wins add up fast.”
+                    </div>
+                </div>
 
-        <Grid item xs={12} align="center">
-          <Typography component="h4" variant="h4">
-            Login
-          </Typography>
-        </Grid>
-
-        <Grid item xs={12} align="center">
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="text"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handleUserNameChange}
-                    onKeyDown={this._handleKeyDown}
-                />
-                <FormHelperText>
-                    <div align = "center">User Name</div>
-                </FormHelperText>
-            </FormControl>
-        </Grid>
-
-       <Grid item xs={12} align="center">
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="password"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handlePasswordChange}
-                    onKeyDown={this._handleKeyDown}
-                />
-                <FormHelperText>
-                    <div align = "center">Password</div>
-                </FormHelperText>
-            </FormControl>
-        </Grid>
-
-       <Grid item xs={12} align="center">
-            <Button color = "primary" variant="contained" onClick={this.handleLoginButtonPressed}   style={{ width: 80}}>
-                Login
-            </Button>
-
-           <Button color = "secondary" variant="contained" to="/register" component={Link} style={{ width: 80}}>
-                Register
-            </Button>
-       </Grid>
-       <Snackbar open={this.state.error_open} onClose={this.handleClose}>
-          <Alert severity="error" onClose={this.handleClose}>
-              {this.state.error_msg || "Login failed."}
-          </Alert>
-       </Snackbar>
-    </Grid>
+                <div className="login-right">
+                    <div className="login-form">
+                        <div className="form-title">Sign in</div>
+                        <label>
+                            Username
+                            <input
+                                required
+                                type="text"
+                                placeholder="yourname"
+                                onChange={this.handleUserNameChange}
+                                onKeyDown={this._handleKeyDown}
+                            />
+                        </label>
+                        <label>
+                            Password
+                            <input
+                                required
+                                type="password"
+                                placeholder="••••••••"
+                                onChange={this.handlePasswordChange}
+                                onKeyDown={this._handleKeyDown}
+                            />
+                        </label>
+                        <button className="login-primary" onClick={this.handleLoginButtonPressed}>
+                            Login
+                        </button>
+                        <div className="login-alt">
+                            <span>New here?</span>
+                            <Link to="/register">Create account</Link>
+                        </div>
+                        {this.state.error_open && (
+                            <div className="login-error" role="alert">
+                                <span>{this.state.error_msg || "Login failed."}</span>
+                                <button type="button" onClick={this.handleClose}>x</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
         )
     }
 }
