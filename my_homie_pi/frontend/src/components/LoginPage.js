@@ -1,86 +1,72 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import "./LoginPage.css";
 
 export default class LoginPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            username   : null,
-            password: null,
-            error_open: false,
+            users: [],
+            loading: true,
             error_msg: null,
+            lastCount: 0,
     };
-        this.handleLoginButtonPressed = this.handleLoginButtonPressed.bind(this);
-        this.handleUserNameChange = this.handleUserNameChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.handleClose = this.handleClose.bind(this);
+        this.selectUser = this.selectUser.bind(this);
+        this.avatarDisplay = this.avatarDisplay.bind(this);
     }
 
-    handleUserNameChange(e) {
-    this.setState({
-      username: e.target.value,
-    });
-  }
-
-    handlePasswordChange(e) {
-    this.setState({
-      password: e.target.value,
-    });
-        console.log(this.state)
+    componentDidMount() {
+        this.fetchUsers();
+        this.poller = setInterval(() => {
+            this.fetchUsers(true);
+        }, 5000);
     }
 
-    _handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      // console.log('do validate');
-        this.handleLoginButtonPressed()
-    }
-    };
-
-    handleClose(){
-        this.setState({ error_open: false });
+    componentWillUnmount() {
+        if (this.poller) {
+            clearInterval(this.poller);
+        }
     }
 
-    async handleLoginButtonPressed(){
-        console.log(this.state);
-        if (!this.state.username || !this.state.password) {
-            this.setState({
-                error_open: true,
-                error_msg: "Please enter username and password.",
+    fetchUsers(isPolling = false) {
+        fetch('/API/kiosk/users')
+            .then((response) => response.json())
+            .then((data) => {
+                const users = Array.isArray(data) ? data : [];
+                this.setState((prev) => ({
+                    users,
+                    loading: false,
+                    error_msg: null,
+                    lastCount: users.length || prev.lastCount,
+                }));
+            })
+            .catch(() => {
+                if (!isPolling) {
+                    this.setState({ loading: false, error_msg: "Unable to load users." });
+                }
             });
-            return;
-        }
-        const requestOptions={
-            method: "POST",
-            headers: {
-                'Accept': 'application/json, text/plain',
-                'Content-Type': 'application/json;charset=UTF-8',
-            },
-             body:JSON.stringify({
-                username:   this.state.username,
-                password:   this.state.password,
-        }),
-        };
+    }
 
-        let data = null;
-        try {
-            const response = await fetch('/API/login', requestOptions);
-            try {
-                data = await response.json();
-            } catch (e) {
-                data = null;
-            }
-            if (response.ok && data && data.access) {
-                localStorage.setItem('access_token', data.access);
-                localStorage.setItem('refresh_token', data.refresh);
-                this.props.history.push("dashboard");
-                return;
-            }
-            const msg = (data && (data.detail || data.error)) || "Login failed. Please check your credentials.";
-            this.setState({ error_open: true, error_msg: msg });
-        } catch (e) {
-            this.setState({ error_open: true, error_msg: "Network error. Please try again." });
+    selectUser(user) {
+        this.props.history.push(`/kiosk?user_id=${user.id}`);
+    }
+
+    avatarDisplay(avatarKey, username) {
+        const palette = {
+            sunset: "#f97316",
+            ocean: "#3b82f6",
+            leaf: "#10b981",
+            rose: "#f43f5e",
+            violet: "#a855f7",
+            sky: "#0ea5e9",
+        };
+        const initials = username ? username.slice(0, 2).toUpperCase() : "HP";
+        if (avatarKey && palette[avatarKey]) {
+            return { text: initials, style: { background: palette[avatarKey], color: "#fff" } };
         }
+        if (avatarKey) {
+            return { text: avatarKey, style: { background: "#f1f5f9", color: "#0f172a", fontSize: "22px" } };
+        }
+        return { text: initials, style: { background: "#0f172a", color: "#fff" } };
     }
 
     render(){
@@ -92,10 +78,9 @@ export default class LoginPage extends Component{
                         <span className="login-dot" />
                         HomiePi
                     </div>
-                    <h1>Welcome back</h1>
+                    <h1>Tap to begin</h1>
                     <p>
-                        A focused space for your daily habits. Keep your streaks alive and
-                        close tasks with one tap.
+                        Pick your profile to open today’s dashboard. No passwords needed.
                     </p>
                     <div className="login-quote">
                         “Small wins add up fast.”
@@ -104,39 +89,33 @@ export default class LoginPage extends Component{
 
                 <div className="login-right">
                     <div className="login-form">
-                        <div className="form-title">Sign in</div>
-                        <label>
-                            Username
-                            <input
-                                required
-                                type="text"
-                                placeholder="yourname"
-                                onChange={this.handleUserNameChange}
-                                onKeyDown={this._handleKeyDown}
-                            />
-                        </label>
-                        <label>
-                            Password
-                            <input
-                                required
-                                type="password"
-                                placeholder="••••••••"
-                                onChange={this.handlePasswordChange}
-                                onKeyDown={this._handleKeyDown}
-                            />
-                        </label>
-                        <button className="login-primary" onClick={this.handleLoginButtonPressed}>
-                            Login
-                        </button>
-                        <div className="login-alt">
-                            <span>New here?</span>
-                            <Link to="/register">Create account</Link>
+                        <div className="form-title">Choose a profile</div>
+                        {this.state.loading && (
+                            <div className="login-note">Loading users...</div>
+                        )}
+                        {!this.state.loading && this.state.users.length === 0 && (
+                            <div className="login-note">No users yet. Create one from your phone.</div>
+                        )}
+                        <div className="user-grid">
+                            {this.state.users.map((user) => {
+                                const avatar = this.avatarDisplay(user.avatar, user.username);
+                                return (
+                                    <button
+                                        key={user.id}
+                                        className="user-card"
+                                        onClick={() => this.selectUser(user)}
+                                    >
+                                        <span className="user-avatar" style={avatar.style}>
+                                            {avatar.text}
+                                        </span>
+                                        <span className="user-name">{user.username}</span>
+                                    </button>
+                                );
+                            })}
                         </div>
-                        {this.state.error_open && (
-                            <div className="login-error" role="alert">
-                                <span>{this.state.error_msg || "Login failed."}</span>
-                                <button type="button" onClick={this.handleClose}>x</button>
-                            </div>
+                        <a className="register-cta" href="/add_new_user">Register new user (QR)</a>
+                        {this.state.error_msg && (
+                            <div className="login-note">{this.state.error_msg}</div>
                         )}
                     </div>
                 </div>

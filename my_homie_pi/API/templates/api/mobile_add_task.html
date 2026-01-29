@@ -142,6 +142,10 @@
         <h1>Add a new task</h1>
         <p>Quickly add a habit for today’s dashboard.</p>
 
+        {% if no_users %}
+          <div class="error">No users yet. Please register a user first.</div>
+        {% endif %}
+
         {% if error %}
           <div class="error">{{ error }}</div>
         {% endif %}
@@ -150,7 +154,7 @@
           {% csrf_token %}
           <input type="hidden" name="token" value="{{ token }}" />
 
-          {% if not token_user %}
+          {% if not token_user and not no_users %}
             <div class="field">Choose user</div>
             <div class="user-list">
               {% for user in users %}

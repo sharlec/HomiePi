@@ -13,9 +13,10 @@ class UserProfile(models.Model):
         (u'F', u'Female'),
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default='M')
     mod_date = models.DateTimeField('Last modified', auto_now=True)
     age = models.IntegerField(null=False, default=1)
+    avatar = models.CharField(max_length=32, default='sunset')
 
     class Meta:
         verbose_name = 'User profile'
@@ -47,6 +48,16 @@ class record(models.Model):
 
 class AddTaskToken(models.Model):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    def is_valid(self):
+        return (not self.used) and timezone.now() <= self.expires_at
+
+class AddUserToken(models.Model):
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()

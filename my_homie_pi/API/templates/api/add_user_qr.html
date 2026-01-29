@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Add Task · HomiePi</title>
+    <title>Register User · HomiePi</title>
     <style>
       body {
         margin: 0;
@@ -38,11 +38,10 @@
         background: #f8fafc;
         border: 1px solid #e2e8f0;
       }
-      .link {
+      .link a {
         word-break: break-all;
         font-size: 12px;
         color: #1d4ed8;
-        margin-top: 14px;
       }
       .meta {
         margin-top: 12px;
@@ -53,15 +52,10 @@
   </head>
   <body>
     <div class="card">
-      <h1>Scan to Add a Task</h1>
-      <p>Use your phone to open the add-task page. This QR expires in 10 minutes.</p>
+      <h1>Scan to Register</h1>
+      <p>Use your phone to create a new family profile.</p>
       <div class="qr" id="qr" data-url="{{ mobile_url }}"></div>
-      <noscript>
-        <div class="link">{{ mobile_url }}</div>
-      </noscript>
-      <div class="link" id="qr-link">
-        <a href="{{ mobile_url }}">{{ mobile_url }}</a>
-      </div>
+      <div class="link"><a href="{{ mobile_url }}">{{ mobile_url }}</a></div>
       <div class="meta">Expires at {{ expires_at }}</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>

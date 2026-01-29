@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('API/',include('API.urls')),
     path('add_new_task', views.add_task_qr_page),
+    path('add_new_user', views.add_user_qr_page),
     path('m/add-task', views.mobile_add_task),
+    path('m/register', views.mobile_register),
     path('', include('frontend.urls'))
 ]

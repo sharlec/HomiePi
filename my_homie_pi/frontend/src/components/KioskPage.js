@@ -14,6 +14,7 @@ export default class KioskPage extends Component {
         this.selectUser = this.selectUser.bind(this);
         this.fetchDashboard = this.fetchDashboard.bind(this);
         this.toggleComplete = this.toggleComplete.bind(this);
+        this.avatarDisplay = this.avatarDisplay.bind(this);
     }
 
     componentDidMount() {
@@ -25,7 +26,11 @@ export default class KioskPage extends Component {
             .then((response) => response.json())
             .then((data) => {
                 const users = Array.isArray(data) ? data : [];
-                const defaultUser = users.length === 1 ? users[0] : null;
+                const params = new URLSearchParams(this.props.location.search || "");
+                const requestedId = params.get("user_id");
+                const defaultUser = requestedId
+                    ? users.find((u) => String(u.id) === String(requestedId))
+                    : (users.length === 1 ? users[0] : null);
                 this.setState(
                     { users, selectedUser: defaultUser, loading: false },
                     () => {
@@ -77,6 +82,25 @@ export default class KioskPage extends Component {
         });
     }
 
+    avatarDisplay(avatarKey, username) {
+        const palette = {
+            sunset: "#f97316",
+            ocean: "#3b82f6",
+            leaf: "#10b981",
+            rose: "#f43f5e",
+            violet: "#a855f7",
+            sky: "#0ea5e9",
+        };
+        const initials = username ? username.slice(0, 2).toUpperCase() : "HP";
+        if (avatarKey && palette[avatarKey]) {
+            return { text: initials, style: { background: palette[avatarKey], color: "#fff" } };
+        }
+        if (avatarKey) {
+            return { text: avatarKey, style: { background: "#f1f5f9", color: "#0f172a", fontSize: "18px" } };
+        }
+        return { text: initials, style: { background: "#0f172a", color: "#fff" } };
+    }
+
     render() {
         const { users, selectedUser, record_list, loading } = this.state;
         const pending = record_list.filter((item) => (item.complete || 0) < (item.repeat || 1));
@@ -96,16 +120,21 @@ export default class KioskPage extends Component {
 
                 <section className="kiosk-users">
                     {loading && <div className="kiosk-note">Loading users...</div>}
-                    {!loading && users.map((user) => (
-                        <button
-                            key={user.id}
-                            className={`user-pill ${selectedUser && user.id === selectedUser.id ? "active" : ""}`}
-                            onClick={() => this.selectUser(user)}
-                        >
-                            <span className="pill-avatar">{user.username.slice(0, 2).toUpperCase()}</span>
-                            <span className="pill-name">{user.username}</span>
-                        </button>
-                    ))}
+                    {!loading && users.map((user) => {
+                        const avatar = this.avatarDisplay(user.avatar, user.username);
+                        return (
+                            <button
+                                key={user.id}
+                                className={`user-pill ${selectedUser && user.id === selectedUser.id ? "active" : ""}`}
+                                onClick={() => this.selectUser(user)}
+                            >
+                                <span className="pill-avatar" style={avatar.style}>
+                                    {avatar.text}
+                                </span>
+                                <span className="pill-name">{user.username}</span>
+                            </button>
+                        );
+                    })}
                 </section>
 
                 {!selectedUser && (

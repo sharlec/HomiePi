@@ -19,22 +19,14 @@ import datetime
 from .updateRecord import recordUpdate
 from django.utils import timezone
 import secrets
-from .models import AddTaskToken
+from .models import AddTaskToken, AddUserToken
 
 
 
 def index(request):
     return render(request,"index.html")
 
-def ensure_default_user():
-    if not User.objects.exists():
-        user = User.objects.create(username="charles")
-        user.set_unusable_password()
-        user.save()
-        UserProfile.objects.create(user=user, gender="M", age=18)
-
 def add_task_qr_page(request):
-    ensure_default_user()
     user_id = request.GET.get("user_id")
     user = None
     if user_id:
@@ -46,25 +38,12 @@ def add_task_qr_page(request):
 
     mobile_url = request.build_absolute_uri(f"/m/add-task?token={token_value}")
 
-    try:
-        import qrcode
-        import qrcode.image.svg
-        from io import BytesIO
-        img = qrcode.make(mobile_url, image_factory=qrcode.image.svg.SvgImage)
-        buffer = BytesIO()
-        img.save(buffer)
-        qr_svg = buffer.getvalue().decode()
-    except Exception:
-        qr_svg = None
-
     return render(request, "api/add_task_qr.html", {
         "mobile_url": mobile_url,
         "expires_at": expires_at,
-        "qr_svg": qr_svg,
     })
 
 def mobile_add_task(request):
-    ensure_default_user()
     token_value = request.GET.get("token") or request.POST.get("token")
     if not token_value:
         return render(request, "api/mobile_add_task.html", {"error": "Missing token."})
@@ -137,16 +116,88 @@ def mobile_add_task(request):
         "token": token_value,
         "users": user_cards,
         "token_user": token_obj.user,
+        "no_users": len(users) == 0,
     })
 
+def add_user_qr_page(request):
+    token_value = secrets.token_urlsafe(16)
+    expires_at = timezone.now() + datetime.timedelta(minutes=10)
+    AddUserToken.objects.create(token=token_value, expires_at=expires_at)
+    mobile_url = request.build_absolute_uri(f"/m/register?token={token_value}")
+    return render(request, "api/add_user_qr.html", {
+        "mobile_url": mobile_url,
+        "expires_at": expires_at,
+    })
+
+def mobile_register(request):
+    token_value = request.GET.get("token") or request.POST.get("token")
+    if not token_value:
+        return render(request, "api/mobile_register.html", {"error": "Missing token."})
+
+    token_obj = AddUserToken.objects.filter(token=token_value).first()
+    if not token_obj or not token_obj.is_valid():
+        return render(request, "api/mobile_register.html", {"error": "Token expired or invalid."})
+
+    avatars = [
+        {"key": "😀"},
+        {"key": "😺"},
+        {"key": "🐼"},
+        {"key": "🍀"},
+        {"key": "⭐️"},
+        {"key": "🌊"},
+    ]
+
+    if request.method == "POST":
+        name = (request.POST.get("name") or "").strip()
+        age = request.POST.get("age") or "1"
+        avatar = request.POST.get("avatar") or "sunset"
+        if not name:
+            return render(request, "api/mobile_register.html", {
+                "error": "Name is required.",
+                "token": token_value,
+                "avatars": avatars,
+            })
+        try:
+            age = int(age)
+            if age < 1:
+                age = 1
+        except ValueError:
+            age = 1
+
+        if User.objects.filter(username=name).exists():
+            return render(request, "api/mobile_register.html", {
+                "error": "User already exists.",
+                "token": token_value,
+                "avatars": avatars,
+            })
+
+        user = User.objects.create(username=name)
+        user.set_unusable_password()
+        user.save()
+        UserProfile.objects.create(user=user, gender="M", age=age, avatar=avatar)
+        token_obj.used = True
+        token_obj.used_at = timezone.now()
+        token_obj.save(update_fields=["used", "used_at"])
+        return render(request, "api/mobile_register.html", {"success": True})
+
+    return render(request, "api/mobile_register.html", {
+        "token": token_value,
+        "avatars": avatars,
+    })
+
+@api_view(['GET'])
 def kiosk_user_list(request):
-    ensure_default_user()
     users = User.objects.all().order_by("id")
-    data = [{"id": u.id, "username": u.username} for u in users]
+    data = []
+    for u in users:
+        avatar = None
+        if hasattr(u, "profile"):
+            avatar = u.profile.avatar
+        data.append({"id": u.id, "username": u.username, "avatar": avatar})
     return Response(data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
 def kiosk_dashboard(request):
-    ensure_default_user()
     user_id = request.GET.get("user_id")
     if not user_id:
         return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -170,6 +221,7 @@ def kiosk_dashboard(request):
     }
     return Response(data, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
 def kiosk_record_update(request):
     record_id = request.data.get("record_id")
     user_id = request.data.get("user_id")

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register · HomiePi</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Space Grotesk", Arial, sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+        padding: 20px;
+      }
+      .card {
+        max-width: 540px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: 0 24px 50px rgba(15, 23, 42, 0.15);
+      }
+      h1 {
+        margin: 0 0 10px;
+        font-size: 22px;
+      }
+      p {
+        margin: 0 0 16px;
+        color: #64748b;
+        font-size: 14px;
+      }
+      .error {
+        background: rgba(239, 68, 68, 0.12);
+        color: #b91c1c;
+        padding: 10px 12px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        font-size: 13px;
+      }
+      .success {
+        background: rgba(34, 197, 94, 0.12);
+        color: #15803d;
+        padding: 14px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        text-align: center;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 14px;
+        font-size: 12px;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        color: #64748b;
+      }
+      input[type="text"],
+      input[type="number"] {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      .avatar-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .avatar-chip {
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+      .avatar-chip input {
+        display: none;
+      }
+      .avatar-chip.active {
+        border-color: #f97316;
+        background: rgba(249, 115, 22, 0.08);
+      }
+      .avatar-emoji {
+        font-size: 22px;
+      }
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .btn {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        background: #f97316;
+        color: #fff;
+        box-shadow: 0 12px 24px rgba(249, 115, 22, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      {% if success %}
+        <div class="success">Profile created! You can close this page.</div>
+      {% else %}
+        <h1>Create a profile</h1>
+        <p>Add a name, age, and pick an avatar color.</p>
+
+        {% if error %}
+          <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="token" value="{{ token }}" />
+          <input type="hidden" name="avatar" id="avatar-input" value="😀" />
+
+          <label class="field">
+            Name
+            <input type="text" name="name" placeholder="e.g. Charles" required />
+          </label>
+
+          <label class="field">
+            Age
+            <input type="number" name="age" min="1" value="18" />
+          </label>
+
+          <div class="field">Choose avatar</div>
+          <div class="avatar-grid">
+            {% for avatar in avatars %}
+              <button type="button" class="avatar-chip" data-avatar="{{ avatar.key }}">
+                <span class="avatar-emoji">{{ avatar.key }}</span>
+              </button>
+            {% endfor %}
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Create</button>
+          </div>
+        </form>
+      {% endif %}
+    </div>
+
+    <script>
+      const chips = document.querySelectorAll(".avatar-chip");
+      const input = document.getElementById("avatar-input");
+      chips.forEach((chip, index) => {
+        chip.addEventListener("click", () => {
+          chips.forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          input.value = chip.dataset.avatar;
+        });
+        if (index === 0) {
+          chip.classList.add("active");
+        }
+      });
+    </script>
+  </body>
+</html>
