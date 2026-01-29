@@ -1,23 +1,6 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import LinearProgress from '@material-ui/core/LinearProgress';
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import FormHelperText from "@material-ui/core/FormControl";
-import { Link } from "react-router-dom";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl/FormControl";
-import TextField from "@material-ui/core/TextField/TextField";
-// import Modal from './Modal/addTask'
-import TaskModal from './Modal/TaskModal'
-import { Modal } from '@material-ui/core';
-import Testmodal from './Modal/Test';
 import Dialog from './Modal/Dialog';
+import "./Dashboard.css";
 
 export default class Dashboard extends Component {
 
@@ -25,8 +8,7 @@ export default class Dashboard extends Component {
         super(props);
         // this.showModal = this.showModal.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
-        this.increase = this.increase.bind(this);
-        this.decrease = this.decrease.bind(this);
+        this.toggleComplete = this.toggleComplete.bind(this);
         this.persistRecord = this.persistRecord.bind(this);
         this.handleLogoutButtonPressed = this.handleLogoutButtonPressed.bind(this);
         this.tan=this.tan.bind(this);
@@ -139,115 +121,140 @@ export default class Dashboard extends Component {
         });
     }
 
-    increase(index) {
-        const record_list = [...this.state.record_list];
-        const entry = { ...record_list[index] };
-        let complete = entry["complete"] + 1;
-        let repeat = entry["repeat"];
-
-        if (complete > repeat) {
-            complete = repeat;
-        }
-        entry["complete"] = complete;
-        record_list[index] = entry;
-
-        this.setState({record_list});
-        this.persistRecord(entry["id"], complete);
-    };
-
-    decrease(index) {
-        const record_list = [...this.state.record_list];
-        const entry = { ...record_list[index] };
-        let complete = entry["complete"] - 1;
-
-        if (complete < 0) {
-            complete = 0;
-        }
-
-        entry["complete"] = complete;
-        record_list[index] = entry;
-
-        this.setState({record_list});
-        this.persistRecord(entry["id"], complete);
+    toggleComplete(recordId, markDone, repeat) {
+        const targetComplete = markDone ? 0 : Math.max(repeat || 1, 1);
+        const record_list = this.state.record_list.map((item) => {
+            if (item.id === recordId) {
+                return { ...item, complete: targetComplete };
+            }
+            return item;
+        });
+        this.setState({ record_list });
+        this.persistRecord(recordId, targetComplete);
     }
 
     render() {
-        const {visible} = this.state;
+        const now = new Date();
+        const dateLabel = now.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "2-digit",
+        });
+        const pending = this.state.record_list.filter((item) => {
+            const repeat = item.repeat || 1;
+            return item.complete < repeat;
+        });
+        const done = this.state.record_list.filter((item) => {
+            const repeat = item.repeat || 1;
+            return item.complete >= repeat;
+        });
+        const initials = this.state.username ? this.state.username.slice(0, 2).toUpperCase() : "HP";
         return (
-            <Grid container direction="row"
-                  alignItems="center"
-                  justify="center"
-                  style={{minHeight: '100vh'}}
-                  xs={12}>
-                <Grid item align="center" xs={2}>
-                    <Grid container direction="column"
-                          align="center">
-                        <Grid item><h3>Dashboard</h3></Grid>
-                        <Grid item>username : {this.state.username}</Grid>
-                        <Grid item>age : {this.state.age}</Grid>
-                        <Grid item>gender : {this.state.gender}</Grid>
-                        <Grid item>maybe photo</Grid>
-                        <Grid item>
-                            <Button color="primary"
-                                    variant="contained"
-                                    onClick={this.handleLogoutButtonPressed}
-                                    style={{width: 80}}>
-                                Logout
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Grid>
-
-                <Grid item align="center" xs={5}>
-                    <Grid container
-                          direction="column">
-                        <Grid item xs={12}><h3>Today Agenda</h3></Grid>
-                        <Grid container direction="row">
-                            {this.state.record_list.map((record, index) => (
-                                <Grid item xs={12}>
-                                    {record['task_name']}:
-                                    <LinearProgress algin="center"
-                                                    variant="determinate" style={{color: "#0ec44e"}}
-                                                    value={record["repeat"] ? 100 * (record["complete"] / record["repeat"]) : 0}
-                                                    label={record["task_name"]}
-                                    />
-                                    <Grid item xs={5}>
-                                        <AddBoxIcon onClick={() => this.increase(index)}
-                                                    style={{color: "#0ec44e"}}/>
-                                        <IndeterminateCheckBoxIcon onClick={() => {
-                                            this.decrease(index);
-                                        }} style={{color: "#f54278"}}/>
-                                    </Grid>
-
-                                </Grid>
-                            ))}
-
-                        </Grid>
-                    </Grid>
-                </Grid>
-
-                <Grid item align="center" xs={4}>
-                    <Grid container direction="column">
-                        <Grid item xs={12}><h3>Task Showlist</h3></Grid>
-                        {this.state.task_list.map(task => (
-                            <p>{task['name']}</p>
-
-                        ))}
-                    </Grid>
-
-                <Grid item xs={12}>
+            <div className="dashboard-root">
                 <Dialog display={this.state.display} hide={this.hide} />
-                <Button color="primary"
-                    variant="contained"
-                    onClick={this.tan}
-                >
-                    New Task
-                </Button>
+                <aside className="dashboard-sidebar">
+                    <div className="brand">
+                        <span className="brand-dot" />
+                        HomiePi
+                    </div>
+                    <div className="user-card">
+                        <div className="avatar">{initials}</div>
+                        <div className="user-meta">
+                            <div className="user-name">{this.state.username || "Welcome"}</div>
+                            <div className="user-sub">Daily Focus Board</div>
+                        </div>
+                    </div>
+                    <div className="menu">
+                        <button className="menu-btn primary" onClick={this.tan}>
+                            Add Task
+                        </button>
+                        <button className="menu-btn ghost" onClick={this.handleLogoutButtonPressed}>
+                            Logout
+                        </button>
+                    </div>
+                    <div className="sidebar-stats">
+                        <div className="stat">
+                            <div className="stat-label">Pending</div>
+                            <div className="stat-value">{pending.length}</div>
+                        </div>
+                        <div className="stat">
+                            <div className="stat-label">Done</div>
+                            <div className="stat-value">{done.length}</div>
+                        </div>
+                    </div>
+                </aside>
+                <main className="dashboard-main">
+                    <header className="dashboard-header">
+                        <div>
+                            <div className="eyebrow">Today</div>
+                            <h1>Focus Dashboard</h1>
+                            <p className="subtitle">Tap a box to mark a task as complete.</p>
+                        </div>
+                        <div className="date-chip">{dateLabel}</div>
+                    </header>
 
-                    </Grid>
-                </Grid>
-            </Grid>
+                    <section className="task-section">
+                        <div className="section-title">Pending Tasks</div>
+                        <div className="task-grid">
+                            {pending.length === 0 && (
+                                <div className="empty-card">All clear. Add a new task or enjoy the break.</div>
+                            )}
+                            {pending.map((record, index) => {
+                                const repeat = record.repeat || 1;
+                                const checked = record.complete >= repeat;
+                                return (
+                                    <label
+                                        className={`task-card ${checked ? "done" : ""}`}
+                                        style={{ animationDelay: `${index * 80}ms` }}
+                                        key={record.id}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={() => this.toggleComplete(record.id, checked, repeat)}
+                                        />
+                                        <div className="task-body">
+                                            <div className="task-title">{record.task_name}</div>
+                                            <div className="task-meta">{record.complete}/{repeat} reps</div>
+                                        </div>
+                                        <span className="task-check" />
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </section>
+
+                    <section className="task-section">
+                        <div className="section-title">Completed</div>
+                        <div className="task-grid">
+                            {done.length === 0 && (
+                                <div className="empty-card muted">No tasks completed yet.</div>
+                            )}
+                            {done.map((record, index) => {
+                                const repeat = record.repeat || 1;
+                                return (
+                                    <label
+                                        className="task-card done"
+                                        style={{ animationDelay: `${index * 60}ms` }}
+                                        key={record.id}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={true}
+                                            onChange={() => this.toggleComplete(record.id, true, repeat)}
+                                        />
+                                        <div className="task-body">
+                                            <div className="task-title">{record.task_name}</div>
+                                            <div className="task-meta">Complete</div>
+                                        </div>
+                                        <span className="task-check" />
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </section>
+                </main>
+            </div>
         )
     }
 }
-

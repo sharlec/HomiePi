@@ -11,6 +11,8 @@ import cookie from "react-cookie";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 
 export default class LoginPage extends Component{
     constructor(props){
@@ -18,10 +20,13 @@ export default class LoginPage extends Component{
         this.state = {
             username   : null,
             password: null,
+            error_open: false,
+            error_msg: null,
     };
         this.handleLoginButtonPressed = this.handleLoginButtonPressed.bind(this);
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     handleUserNameChange(e) {
@@ -44,8 +49,19 @@ export default class LoginPage extends Component{
     }
     };
 
-    handleLoginButtonPressed(){
+    handleClose(){
+        this.setState({ error_open: false });
+    }
+
+    async handleLoginButtonPressed(){
         console.log(this.state);
+        if (!this.state.username || !this.state.password) {
+            this.setState({
+                error_open: true,
+                error_msg: "Please enter username and password.",
+            });
+            return;
+        }
         const requestOptions={
             method: "POST",
             headers: {
@@ -58,16 +74,25 @@ export default class LoginPage extends Component{
         }),
         };
 
-        fetch('/API/login', requestOptions).then((response)=>response.json()).then(
-            data => {
-                if (data.access) {
-                    localStorage.setItem('access_token', data.access);
-                    localStorage.setItem('refresh_token', data.refresh);
-
-                    this.props.history.push("dashboard")
-                } else console.log()
+        let data = null;
+        try {
+            const response = await fetch('/API/login', requestOptions);
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = null;
             }
-        )
+            if (response.ok && data && data.access) {
+                localStorage.setItem('access_token', data.access);
+                localStorage.setItem('refresh_token', data.refresh);
+                this.props.history.push("dashboard");
+                return;
+            }
+            const msg = (data && (data.detail || data.error)) || "Login failed. Please check your credentials.";
+            this.setState({ error_open: true, error_msg: msg });
+        } catch (e) {
+            this.setState({ error_open: true, error_msg: "Network error. Please try again." });
+        }
     }
 
     render(){
@@ -127,7 +152,12 @@ export default class LoginPage extends Component{
            <Button color = "secondary" variant="contained" to="/register" component={Link} style={{ width: 80}}>
                 Register
             </Button>
-        </Grid>
+       </Grid>
+       <Snackbar open={this.state.error_open} onClose={this.handleClose}>
+          <Alert severity="error" onClose={this.handleClose}>
+              {this.state.error_msg || "Login failed."}
+          </Alert>
+       </Snackbar>
     </Grid>
         )
     }

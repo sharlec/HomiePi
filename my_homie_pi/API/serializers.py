@@ -13,7 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(required=True)
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'profile', 'password','is_active')
+        fields = ('first_name', 'last_name', 'username', 'profile', 'password')
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'first_name': {'required': False, 'allow_blank': True},
+            'last_name': {'required': False, 'allow_blank': True},
+        }
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
@@ -22,8 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
-            first_name = validated_data['first_name'],
-            last_name = validated_data['last_name'],
+            first_name = validated_data.get('first_name', ''),
+            last_name = validated_data.get('last_name', ''),
             is_active = True
         )
 

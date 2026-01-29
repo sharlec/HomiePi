@@ -1,11 +1,5 @@
 import React,{Component} from 'react'
 import './dialog.css'
-import FormControl from "@material-ui/core/FormControl/FormControl";
-import TextField from "@material-ui/core/TextField/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText/FormHelperText";
-import FormGroup from "@material-ui/core/FormGroup/FormGroup";
-import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 
 export default class Dialog extends Component {
     constructor(props){
@@ -84,75 +78,74 @@ export default class Dialog extends Component {
 
     render(){
         return (
-            <div className="mask" style={{display:this.props.display}}>
-            <div className="content">
-            <h5>Add New Task Here</h5>
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="text"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handleTaskChange}
-                />
-                <FormHelperText>
-                    <div align = "center">Task Name</div>
-                </FormHelperText>
-            </FormControl>
+            <div
+                className="modal-overlay"
+                style={{ display: this.props.display === 'block' ? 'flex' : 'none' }}
+                onClick={this.props.hide}
+            >
+                <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-header">
+                        <div>
+                            <div className="modal-eyebrow">New Task</div>
+                            <h3>Create a fresh goal</h3>
+                            <p>Pick the days and target repeats for today.</p>
+                        </div>
+                        <button className="icon-button" onClick={this.props.hide} type="button">x</button>
+                    </div>
 
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="number"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handleRepeatChange}
-                />
-                <FormHelperText>
-                    <div align = "center">How many times per day</div>
-                </FormHelperText>
-            </FormControl>
-        <FormControl component="fieldset">
-            <FormGroup aria-label="position" row>
-                 { JSON.stringify(this.state.selected) }
-                  {this.state.week.map(item => {
-                      return (
-                            <label key={ item.id } position="bottom">
-                        <Checkbox
-                          color="primary"
-                              onChange={ () => this.handleWeekChange(item.id) }
-                              selected={ this.state.selected.includes(item.id) }
-                            ></Checkbox>
-                              <span>{ item.name }</span>
+                    <div className="modal-body">
+                        <label className="field">
+                            <span>Task name</span>
+                            <input
+                                required={true}
+                                type="text"
+                                placeholder="e.g. Morning stretch"
+                                onChange={this.handleTaskChange}
+                            />
                         </label>
-                      )
-                    })
-                  }
-            </FormGroup>
-            <FormHelperText>
-                <div align = "center">Weekly Schedule</div>
-            </FormHelperText>
-        </FormControl>
 
-        <Button color="primary"
-            variant="contained"
-            onClick={this.handleConfirmButtonPressed}
-            style={{width: 80}}>
-            Confirm
-        </Button>
+                        <label className="field">
+                            <span>Daily repeat</span>
+                            <input
+                                required={true}
+                                type="number"
+                                min="1"
+                                step="1"
+                                placeholder="1"
+                                onChange={this.handleRepeatChange}
+                            />
+                        </label>
 
-        <Button color="secondary"
-            variant="contained"
-            onClick={this.props.hide}
-            style={{width: 80}}>
-            Cancel
-        </Button>
+                        <div className="field">
+                            <span>Weekly schedule</span>
+                            <div className="week-grid">
+                                {this.state.week.map(item => {
+                                    const isActive = this.state.selected.includes(item.id);
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            type="button"
+                                            className={`week-chip ${isActive ? "active" : ""}`}
+                                            onClick={() => this.handleWeekChange(item.id)}
+                                        >
+                                            {item.name}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
 
-
-        </div>
-    </div>
+                    <div className="modal-actions">
+                        <button className="btn ghost" onClick={this.props.hide} type="button">
+                            Cancel
+                        </button>
+                        <button className="btn primary" onClick={this.handleConfirmButtonPressed} type="button">
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
         );
     }
 }

@@ -1,25 +1,151 @@
-.mask{
-    width: 100%;
-    height: 100%;
-    /*position: fixed;*/
-    left: 0;
-    right: 0;
-    left: 50%;
-    top: 50%;
-    background-color: #402fff;
-    opacity: 0.9;
-    color: #000000;
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    backdrop-filter: blur(8px);
 }
 
+.modal-card {
+    width: min(460px, 92vw);
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 22px 24px;
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.25);
+    font-family: "Space Grotesk", sans-serif;
+    color: #0f172a;
+    animation: modalPop 0.25s ease;
+}
 
-.content{
-    position: fixed;
-    height: 300px;
-    border-color: black;
-    border-style: double;
-    width: 300px;
-    left: 50%;
-    top: 50%;
-    background-color: #c0cdec;
-    transform: translate(-50%,-50%);
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-eyebrow {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    color: #f97316;
+    font-weight: 600;
+}
+
+.modal-header h3 {
+    margin: 6px 0 4px;
+    font-family: "Fraunces", serif;
+    font-size: 22px;
+}
+
+.modal-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.icon-button {
+    border: none;
+    background: rgba(15, 23, 42, 0.08);
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.field input {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+.field input:focus {
+    outline: none;
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.week-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.week-chip {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    color: #475569;
+}
+
+.week-chip.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn.primary {
+    background: #f97316;
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(249, 115, 22, 0.3);
+}
+
+.btn.ghost {
+    background: rgba(15, 23, 42, 0.08);
+    color: #0f172a;
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }

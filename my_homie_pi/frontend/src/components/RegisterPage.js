@@ -22,18 +22,15 @@ export default class RegisterPagePage extends Component{
         this.state = {
             gender : "M",
             username   : null,
-            first_name  : null,
-            last_name   : null,
             password   : null,
             age    : 0,
             show : false,
+            show_error: false,
             error_msg : null,
     };
         this.handleRegisterButtonPressed = this.handleRegisterButtonPressed.bind(this);
         this.handleAgeChange = this.handleAgeChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
-        this.handleFirstNameChange = this.handleFirstNameChange.bind(this);
-        this.handleLastNameChange = this.handleLastNameChange.bind(this);
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleClose =this.handleClose.bind(this);
@@ -45,18 +42,6 @@ export default class RegisterPagePage extends Component{
     handleUserNameChange(e) {
     this.setState({
       username: e.target.value,
-    });
-  }
-
-    handleFirstNameChange(e) {
-    this.setState({
-      first_name: e.target.value,
-    });
-  }
-
-    handleLastNameChange(e) {
-    this.setState({
-      last_name: e.target.value,
     });
   }
 
@@ -79,11 +64,15 @@ export default class RegisterPagePage extends Component{
   }
 
       handleClose(e) {
-        this.setState({ show: false });
+        this.setState({ show: false, show_error: false });
   }
 
-    handleRegisterButtonPressed(){
+    async handleRegisterButtonPressed(){
         console.log(this.state);
+        if (!this.state.username || !this.state.password) {
+            this.setState({ show_error: true, error_msg: "Please fill all required fields." });
+            return;
+        }
         const requestOptions={
             method: "POST",
             headers: {
@@ -93,20 +82,41 @@ export default class RegisterPagePage extends Component{
             body:JSON.stringify({
                 username:   this.state.username,
                 password:   this.state.password,
-                first_name: this.state.first_name,
-                last_name: this.state.last_name,
-
                 profile: {age: this.state.age, gender: this.state.gender}
         }),
         };
-        fetch('/API/user',requestOptions).then((response)=>{
-            if (response.status < 300){
-                this.setState({ show: true, error_msg: null });
+        let data = null;
+        try {
+            const response = await fetch('/API/user',requestOptions);
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = null;
             }
-            else
-                this.setState({ error_msg: "something wrong" })
-        })
-            // response.json()).then((data)=>console.log(data))
+            if (response.ok) {
+                this.setState({ show: true, error_msg: null });
+                return;
+            }
+            let msg = "Registration failed.";
+            if (data) {
+                if (data.detail) {
+                    msg = data.detail;
+                } else if (typeof data === 'object') {
+                    const firstKey = Object.keys(data)[0];
+                    if (firstKey) {
+                        const firstVal = data[firstKey];
+                        if (Array.isArray(firstVal)) {
+                            msg = `${firstKey}: ${firstVal[0]}`;
+                        } else {
+                            msg = `${firstKey}: ${firstVal}`;
+                        }
+                    }
+                }
+            }
+            this.setState({ show_error: true, error_msg: msg });
+        } catch (e) {
+            this.setState({ show_error: true, error_msg: "Network error. Please try again." });
+        }
         // if success, then redirect to login or dashboard
         // give success information
     }
@@ -148,38 +158,6 @@ export default class RegisterPagePage extends Component{
               </RadioGroup>
              </FormControl>
          </Grid>
-
-        <Grid item xs={12} align="center">
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="text"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handleFirstNameChange}
-                />
-                <FormHelperText>
-                    <div align = "center">First Name</div>
-                </FormHelperText>
-            </FormControl>
-        </Grid>
-
-        <Grid item xs={12} align="center">
-            <FormControl>
-                <TextField
-                    required={true}
-                    type="text"
-                    inputProps={{
-                        style:{textAlign:"center"},
-                    }}
-                    onChange={this.handleLastNameChange}
-                />
-                <FormHelperText>
-                    <div align = "center">Last Name</div>
-                </FormHelperText>
-            </FormControl>
-        </Grid>
 
         <Grid item xs={12} align="center">
             <FormControl>
@@ -249,6 +227,11 @@ export default class RegisterPagePage extends Component{
          <Alert severity="success">
              Registration Success!
          </Alert>
+        </Snackbar>
+        <Snackbar open={this.state.show_error} onClose={this.handleClose}>
+            <Alert severity="error" onClose={this.handleClose}>
+                {this.state.error_msg || "Registration failed."}
+            </Alert>
         </Snackbar>
 
         </Grid>
