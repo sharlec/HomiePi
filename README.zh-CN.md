@@ -49,7 +49,7 @@ HomiePi 可以把树莓派（或任意内网主机）+ 屏幕变成家庭任务�
 
 ### 1) 后端
 ```
-cd my_homie_pi
+cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r ../requirements.txt
@@ -59,7 +59,7 @@ python manage.py runserver 0.0.0.0:8000
 
 ### 2) 前端构建（仅在修改前端代码后需要）
 ```
-cd my_homie_pi/frontend
+cd backend/frontend
 npm install
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
@@ -92,10 +92,10 @@ http://<pi-ip>:8000/
 
 ## 项目结构
 
-- `my_homie_pi/` Django 项目根目录（包含 `manage.py`）
-- `my_homie_pi/API/` 后端模型与视图
-- `my_homie_pi/frontend/` React 源码与构建工具
-- `my_homie_pi/frontend/static/frontend/main.js` 编译后的前端包
+- `backend/` Django 项目根目录（包含 `manage.py`）
+- `backend/API/` 后端模型与视图
+- `backend/frontend/` React 源码与构建工具
+- `backend/frontend/static/frontend/main.js` 编译后的前端包
 
 ## 计划
 

@@ -49,7 +49,7 @@ Prereqs: Python + pip. Node.js is only needed if you want to rebuild the fronten
 
 ### 1) Backend
 ```
-cd my_homie_pi
+cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r ../requirements.txt
@@ -59,7 +59,7 @@ python manage.py runserver 0.0.0.0:8000
 
 ### 2) Frontend build (only if you change frontend code)
 ```
-cd my_homie_pi/frontend
+cd backend/frontend
 npm install
 NODE_OPTIONS=--openssl-legacy-provider npm run build
 ```
@@ -92,10 +92,10 @@ http://<pi-ip>:8000/
 
 ## Project Structure
 
-- `my_homie_pi/` Django project root (contains `manage.py`)
-- `my_homie_pi/API/` backend models and views
-- `my_homie_pi/frontend/` React source + build tooling
-- `my_homie_pi/frontend/static/frontend/main.js` compiled frontend bundle
+- `backend/` Django project root (contains `manage.py`)
+- `backend/API/` backend models and views
+- `backend/frontend/` React source + build tooling
+- `backend/frontend/static/frontend/main.js` compiled frontend bundle
 
 ## Roadmap
 
